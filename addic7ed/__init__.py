@@ -15,7 +15,7 @@ def get(url, raw=False, **params):
     url = urljoin(last_url, url)
     request = requests.get(url, headers={'Referer': last_url}, params=params)
     last_url = url
-    return request.text if raw else query(request.content)
+    return request.content if raw else query(request.content)
 
 
 def search(query):
@@ -136,7 +136,8 @@ class Version(object):
         return unicode(self).encode('utf-8')
 
     def download(self, filename):
-        print 'download', self.url
+        with open(filename, 'wb') as fp:
+            fp.write(get(self.url, raw=True))
 
 
 def ui_select(choices):
