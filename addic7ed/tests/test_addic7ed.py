@@ -9,7 +9,7 @@ class TestAddic7ed(TestCase):
     maxDiff = None
 
     def test_search(self):
-        result = addic7ed.search('homeland 2x02')
+        result = addic7ed.Episode.search('homeland 2x02')
         self.assertEqual(result, [
             addic7ed.Episode('serie/Homeland/2/2/Beirut_Is_Back',
                              'Homeland - 02x02 - Beirut Is Back')
@@ -45,5 +45,5 @@ class TestAddic7ed(TestCase):
         result.fetch_versions()
         self.assertEqual(result.title, 'Homeland - 02x02 - Beirut Is Back')
         versions = result.filter_versions(['french', 'english'])
-        self.assertEqual('French', versions[0].language)
-        self.assertEqual('/updated/8/67365/1', versions[0].url)
+        self.assertEqual('French', versions[1].language)
+        self.assertEqual('/updated/8/67365/1', versions[1].url)

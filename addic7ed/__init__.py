@@ -18,12 +18,13 @@ def get(url, raw=False, **params):
     return request.content if raw else query(request.content)
 
 
-def search(query):
-    links = get('/search.php', search=query, submit='Search')('.tabel a')
-    return [Episode(link.attrib['href'], link.text) for link in links]
-
-
 class Episode(object):
+
+    @classmethod
+    def search(cls, query):
+        links = get('/search.php', search=query, submit='Search')('.tabel a')
+        return [cls(link.attrib['href'], link.text) for link in links]
+
     def __init__(self, url, title=None):
         self.url = url
         self.title = title
@@ -140,55 +141,107 @@ class Version(object):
             fp.write(get(self.url, raw=True))
 
 
-def ui_select(choices):
-    if not choices:
-        raise Exception("no choices!")
+class UI(object):
 
-    istuple = isinstance(choices[0], tuple)
+    def __init__(self, args, filename):
+        self.args = args
+        self.filename = filename
 
-    if len(choices) == 1:
-        result = 1
+    def select(self, choices):
+        if not choices:
+            raise Exception("no choices!")
 
-    else:
-        just = len(str(len(choices)))
-        index = 1
-        for choice in choices:
-            print str(index).rjust(just), ':', choice[1] if istuple else choice
-            index += 1
+        if len(choices) == 1 or self.args.batch:
+            result = 1
+
+        else:
+            just = len(str(len(choices)))
+            index = 1
+            for choice in choices:
+                print str(index).rjust(just), ':', choice
+                index += 1
+
+            while True:
+                try:
+                    result = int(raw_input('> '))
+                except ValueError:
+                    result = None
+                except KeyboardInterrupt as e:
+                    print e
+                    exit(1)
+                if not result or not 1 <= result <= len(choices):
+                    print "bad response"
+                else:
+                    break
+
+        result = choices[result - 1]
+        print result
+        return result
+
+    def search(self, query):
+        results = Episode.search(query)
+
+        if not results:
+            print 'No results'
+
+        else:
+            return self.select(results)
+
+    def episode(self, episode, user_languages=[], user_releases=[]):
+        episode.fetch_versions()
+        versions = episode.filter_versions(user_languages, user_releases, True)
+        return self.select(versions)
+
+    def confirm(self, question):
+        question += ' [yn]> '
+
+        if self.args.batch:
+            return True
 
         while True:
-            try:
-                result = int(raw_input('> '))
-            except ValueError:
-                result = None
-            except KeyboardInterrupt as e:
-                print e
-                exit(1)
-            if not result or not 1 <= result <= len(choices):
-                print "bad response"
-            else:
+            answer = raw_input(question)
+            if answer in 'yn':
                 break
 
-    result = choices[result - 1]
-    value, choice = result if istuple else (result, result)
-    print choice
-    return value
+            else:
+                print 'Bad answer'
 
+        return answer == 'y'
 
-def ui_search(query):
-    results = search(query)
+    def launch(self):
+        print '-' * 30
+        args = self.args
+        filename = self.filename
 
-    if not results:
-        print 'No results'
+        if os.path.isfile(filename) and not filename.endswith('.srt'):
+            filename = remove_extension(filename) + '.srt'
 
-    else:
-        return ui_select(results)
+        print 'Target SRT file:', filename
+        ignore = False
+        if os.path.isfile(filename):
+            print 'File exists.',
+            if args.ignore or (not args.overwrite and
+                               not self.confirm('Overwrite?')):
+                print 'Ignoring.'
+                ignore = True
 
+            else:
+                print 'Overwriting.'
 
-def ui_episode(episode, user_languages=[], user_releases=[]):
-    episode.fetch_versions()
-    versions = episode.filter_versions(user_languages, user_releases, True)
-    return ui_select(versions)
+        if not ignore:
+            query, release = file_to_query(filename)
+
+            if args.query:
+                query = args.query
+
+            if args.release:
+                release = string_set(' '.join(args.release))
+
+            todownload = self.episode(self.search(query), args.language,
+                                      release)
+            todownload.download(filename)
+
+        print
 
 
 def file_to_query(filename):
@@ -230,52 +283,6 @@ def string_set(string):
     return set(string.split(' ')) if string else set()
 
 
-def ui_confirm(question):
-    question += ' [yn]> '
-    while True:
-        answer = raw_input(question)
-        if answer in 'yn':
-            break
-
-        else:
-            print 'Bad answer'
-
-    return answer == 'y'
-
-
-def ui_launch(args, filename):
-    print '-' * 30
-
-    if os.path.isfile(filename) and not filename.endswith('.srt'):
-        filename = remove_extension(filename) + '.srt'
-
-    print 'Target SRT file:', filename
-    ignore = False
-    if os.path.isfile(filename):
-        print 'File exists.',
-        if args.ignore or (not args.overwrite and
-                           not ui_confirm('Overwrite?')):
-            print 'Ignoring.'
-            ignore = True
-
-        else:
-            print 'Overwriting.'
-
-    if not ignore:
-        query, release = file_to_query(filename)
-
-        if args.query:
-            query = args.query
-
-        if args.release:
-            release = string_set(' '.join(args.release))
-
-        todownload = ui_episode(ui_search(query), args.language, release)
-        todownload.download(filename)
-
-    print
-
-
 def main():
 
     import argparse
@@ -296,10 +303,13 @@ def main():
     parser.add_argument('-l', '--language', action='append', default=[],
                         help='Auto select language (could be specified more '
                         'than one time for fallbacks)')
+    parser.add_argument('-b', '--batch', action='store_true',
+                        help='Batch mode: do not ask anything, get the best '
+                        'matching subtitle')
     args = parser.parse_args()
 
     for file in args.file:
-        ui_launch(args, file)
+        UI(args, file).launch()
 
 
 if __name__ == '__main__':
