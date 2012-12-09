@@ -137,8 +137,13 @@ class Version(object):
         return unicode(self).encode('utf-8')
 
     def download(self, filename):
+        content = get(self.url, raw=True)
+
+        if content[:9] == '<!DOCTYPE':
+            raise Exception('Daily Download count exceeded.')
+
         with open(filename, 'wb') as fp:
-            fp.write(get(self.url, raw=True))
+            fp.write(content)
 
 
 class UI(object):
@@ -239,7 +244,10 @@ class UI(object):
 
             todownload = self.episode(self.search(query), args.language,
                                       release)
-            todownload.download(filename)
+            try:
+                todownload.download(filename)
+            except Exception, e:
+                print 'Error: ', e
 
         print
 
