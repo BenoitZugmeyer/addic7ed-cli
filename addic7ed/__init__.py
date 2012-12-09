@@ -259,6 +259,8 @@ def file_to_query(filename):
     # remove parenthesis
     basename = re.sub(r'[\[(].*[\])]', '', basename)
     basename = re.sub(r'\bdont\b', 'don\'t', basename)
+    # remove confusing stopwords
+    basename = re.sub(r'\b(?:and|&)\b', '', basename)
     episode = re.search(r'\S*0+(\d+)[xe](\d+)', basename) or \
         re.search(r'(\d+)', basename)
 
