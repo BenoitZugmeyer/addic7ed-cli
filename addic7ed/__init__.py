@@ -84,7 +84,6 @@ class Episode(object):
         last_weight = None
         for version in sorted(self.versions, key=lambda v: v.weight,
                               reverse=True):
-            print version.weight
             if last_weight is None:
                 last_weight = version.weight
             elif last_weight - version.weight >= 0.5:
