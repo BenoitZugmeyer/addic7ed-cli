@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 setup(name='addic7ed',
-      version='0.0',
+      version='0.1',
       description='A commandline access to addic7ed subtitles',
       long_description=readme(),
       url='not.yet',
