@@ -50,6 +50,9 @@ class TestAddic7ed(TestCase):
         result = addic7ed.Episode('serie/Homeland/2/2/Beirut_Is_Back')
         result.fetch_versions()
         self.assertEqual(result.title, 'Homeland - 02x02 - Beirut Is Back')
-        versions = result.filter_versions(['french', 'english'])
-        self.assertEqual('French', versions[1].language)
-        self.assertEqual('/updated/8/67365/1', versions[1].url)
+        versions = result.filter_versions(['english', 'french'],
+                                          set(('evolve',)))
+        self.assertEqual('English', versions[1].language)
+        self.assertEqual('/original/67365/2', versions[1].url)
+        self.assertFalse(versions[0].hearing_impaired)
+        self.assertTrue(versions[1].hearing_impaired)

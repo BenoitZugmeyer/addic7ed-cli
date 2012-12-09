@@ -70,16 +70,20 @@ class Episode(object):
                 download = tr('a[href*=updated]') or tr('a[href*=original]')
                 if not download:
                     continue
+                hearing_impaired = \
+                    bool(tr.next().find('img[title="Hearing Impaired"]'))
                 download = download.attr.href
                 self.add_version(download, language, release, infos,
-                                 completeness)
+                                 completeness, hearing_impaired)
 
-    def filter_versions(self, languages=[], release=set(), completed=True):
+    def filter_versions(self, languages=[], release=set(), completed=True,
+                        hearing_impaired=False):
         for version in self.versions:
             version.weight = 0
             version.match_languages(languages)
             version.match_release(release)
             version.match_completeness(completed)
+            version.match_hearing_impaired(hearing_impaired)
 
         result = []
         last_weight = None
@@ -97,13 +101,15 @@ class Episode(object):
 
 
 class Version(object):
-    def __init__(self, url, language, release, infos, completeness):
+    def __init__(self, url, language, release, infos, completeness,
+                 hearing_impaired):
         self.url = url
         self.language = language
         self.release = release
         self.infos = infos
         self.completeness = completeness
         self.release_hash = string_set(infos) | string_set(release)
+        self.hearing_impaired = hearing_impaired
         self.weight = 0
 
     def __eq__(self, other):
@@ -122,16 +128,21 @@ class Version(object):
         self.weight += weight
 
     def match_release(self, release):
-        self.weight += len(release & self.release_hash) / 2.
+        self.weight += len(release & self.release_hash) / len(release)
 
     def match_completeness(self, completeness):
         match = re.match('(\d+\.?\d+)', self.completeness)
         weight = float(match.group(1)) / 100 if match else 1
         self.weight += weight
 
+    def match_hearing_impaired(self, hearing_impaired):
+        if hearing_impaired == self.hearing_impaired:
+            self.weight += 0.1
+
     def __unicode__(self):
-        return u'{language} - {release} {infos} {completeness}' \
-            .format(**self.__dict__)
+        return u'{language} - {release} {infos} {completeness} {hi}' \
+            .format(hi='HI' if self.hearing_impaired else '',
+                    **self.__dict__)
 
     def __str__(self):
         return unicode(self).encode('utf-8')
@@ -316,6 +327,8 @@ def main():
     parser.add_argument('-b', '--batch', action='store_true',
                         help='Batch mode: do not ask anything, get the best '
                         'matching subtitle')
+    parser.add_argument('-H', '--hearing-impaired', action='store_true',
+                        help='Prefer hearing impaired version')
     args = parser.parse_args()
 
     for file in args.file:
