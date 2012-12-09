@@ -8,6 +8,12 @@ Install it with::
 
     $ pip install https://github.com/BenoitZugmeyer/addic7ed-cli/zipball/master
 
+
+Example, if you speak french and english::
+
+    $ addic7ed -l french -l english The.Serie.S02E23.MDR.mkv
+
+
 Help::
 
     $ addic7ed --help
