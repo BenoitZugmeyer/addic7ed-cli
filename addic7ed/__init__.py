@@ -254,6 +254,12 @@ class UI(object):
             if args.release:
                 release = string_set(' '.join(args.release))
 
+            if args.verbose:
+                print 'Using query "{query}" and release "{release}"'.format(
+                    release=' '.join(release),
+                    query=query
+                )
+
             todownload = self.episode(self.search(query), args.language,
                                       release)
             try:
@@ -349,6 +355,8 @@ def main():
                         'matching subtitle')
     parser.add_argument('-H', '--hearing-impaired', action='store_true',
                         help='Prefer hearing impaired version')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Print some debugging informations')
     args = parser.parse_args()
 
     for file in args.file:
