@@ -266,11 +266,17 @@ def file_to_query(filename):
     basename = os.path.basename(filename).lower()
     basename = remove_extension(basename)
     basename = normalize_whitespace(basename)
+
     # remove parenthesis
     basename = re.sub(r'[\[(].*[\])]', '', basename)
-    basename = re.sub(r'\bdont\b', 'don\'t', basename)
+
     # remove confusing stopwords
     basename = re.sub(r'\b(?:and|&)\b', '', basename)
+
+    # exceptions
+    basename = re.sub(r'\bdont\b', 'don\'t', basename)
+    basename = re.sub(r'\bcsi new york\b', 'csi ny', basename)
+
     episode = re.search(r'\S*0+(\d+)[xe](\d+)', basename) or \
         re.search(r'(\d+)', basename)
 

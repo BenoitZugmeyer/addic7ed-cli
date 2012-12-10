@@ -28,6 +28,12 @@ class TestAddic7ed(TestCase):
         self.assertEqual(query, 'foo bar 2x23')
         self.assertEqual(version, set(('plop',)))
 
+    def test_file_to_query_exceptions(self):
+        query = addic7ed.file_to_query(
+            'CSI.New.York.S09E10.720p.HDTV.X264-YOLO.mkv'
+        )[0]
+        self.assertEqual(query, 'csi ny 9x10')
+
     def test_file_to_query_number_in_title(self):
         filename = 'Dont Apartment.23.S02E05.720p.HDTV.X264-DIMENSION.mkv'
         query, version = addic7ed.file_to_query(filename)
