@@ -347,39 +347,42 @@ def main():
                                      'addic7ed.com.')
 
     parser.add_argument('file', nargs='+',
-                        help='Video file name')
+                        help='Video file name.')
 
     parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Print some debugging informations')
+                        help='Print some debugging informations.')
 
-    parser.add_argument('-q', '--query',
-                        help='Query (default: based on the filename)')
+    custom = parser.add_argument_group('Query customization')
+    custom.add_argument('-q', '--query',
+                        help='Custom query. (default: based on the filename)')
 
-    parser.add_argument('-r', '--release', action='append', default=[],
-                        help='Release (default: based on the filename)')
+    custom.add_argument('-r', '--release', action='append', default=[],
+                        help='Custom release. (default: based on the '
+                        'filename)')
 
-    parser.add_argument('-l', '--language', action='append', default=[],
-                        help='Auto select language (could be specified more '
+    custom.add_argument('-l', '--language', action='append', default=[],
+                        help='Prefer a language. (could be specified more '
                         'than one time for fallbacks)')
 
-    parser.add_argument('-o', '--overwrite', action='store_true',
-                        help='Overwrite the original SRT file without asking')
+    custom.add_argument('-H', '--hearing-impaired', action='store_true',
+                        help='Prefer hearing impaired version.')
 
-    parser.add_argument('-i', '--ignore', action='store_true',
-                        help='Ignore the original SRT file without asking')
+    batch = parser.add_argument_group('Automation')
+    batch.add_argument('-o', '--overwrite', action='store_true',
+                       help='Always overwrite the SRT if it exists.')
 
-    parser.add_argument('-b', '--batch', action='store_true',
-                        help='Batch mode: do not ask anything, get the best '
-                        'matching subtitle. Cancel if the search returns more '
-                        'than one result')
+    batch.add_argument('-i', '--ignore', action='store_true',
+                       help='Never overwrite the SRT if it exists.')
 
-    parser.add_argument('-bb', '--brute-batch', action='store_true',
-                        help='Batch mode: do not ask anything, get the best '
-                        'matching subtitle. Use the first result of the '
-                        'search')
+    batch.add_argument('-b', '--batch', action='store_true',
+                       help='Do not ask anything, get the best matching '
+                       'subtitle. Cancel if the search returns more than one '
+                       'result.')
 
-    parser.add_argument('-H', '--hearing-impaired', action='store_true',
-                        help='Prefer hearing impaired version')
+    batch.add_argument('-bb', '--brute-batch', action='store_true',
+                       help='Do not ask anything, get the best matching '
+                       'subtitle. Use the first result of the search.')
+
     args = parser.parse_args()
 
     try:
