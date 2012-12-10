@@ -198,10 +198,7 @@ class UI(object):
     def search(self, query):
         results = Episode.search(query)
 
-        if not results:
-            print 'No results'
-
-        else:
+        if results:
             return self.select(results)
 
     def episode(self, episode, user_languages=[], user_releases=[]):
@@ -260,12 +257,17 @@ class UI(object):
                     query=query
                 )
 
-            todownload = self.episode(self.search(query), args.language,
-                                      release)
-            try:
-                todownload.download(filename)
-            except Exception, e:
-                print 'Error: ', e
+            search_results = self.search(query)
+            if search_results:
+                todownload = self.episode(search_results, args.language,
+                                          release)
+                try:
+                    todownload.download(filename)
+                except Exception, e:
+                    print 'Error: ', e
+
+            else:
+                print 'No result'
 
         print
 
