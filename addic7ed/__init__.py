@@ -207,9 +207,10 @@ class UI(object):
         print result
         return result
 
-    def episode(self, episode, user_languages=[], user_releases=[]):
+    def episode(self, episode, languages=[], releases=[]):
         episode.fetch_versions()
-        versions = episode.filter_versions(user_languages, user_releases, True)
+        versions = episode.filter_versions(languages, releases, True,
+                                           self.args.hearing_impaired)
         return self.select(versions)
 
     def confirm(self, question):
