@@ -6,7 +6,7 @@ Python 2.x only.
 
 Install it with::
 
-    $ pip install https://github.com/BenoitZugmeyer/addic7ed-cli/zipball/master
+    $ pip install https://github.com/BenoitZugmeyer/addic7ed-cli/archive/master.zip
 
 
 Example, if you speak french and english::
