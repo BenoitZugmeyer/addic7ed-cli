@@ -128,7 +128,7 @@ class Version(object):
         self.weight += weight
 
     def match_release(self, release):
-        self.weight += len(release & self.release_hash) / len(release)
+        self.weight += len(release & self.release_hash) / float(len(release))
 
     def match_completeness(self, completeness):
         match = re.match('(\d+\.?\d+)', self.completeness)
