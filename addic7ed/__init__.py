@@ -10,6 +10,14 @@ import re
 last_url = 'http://www.addic7ed.com/'
 
 
+class Error(Exception):
+    pass
+
+
+class FatalError(Exception):
+    pass
+
+
 def get(url, raw=False, **params):
     global last_url
     url = urljoin(last_url, url)
@@ -152,7 +160,7 @@ class Version(object):
         content = get(self.url, raw=True)
 
         if content[:9] == '<!DOCTYPE':
-            raise Exception('Daily Download count exceeded.')
+            raise FatalError('Daily Download count exceeded.')
 
         with open(filename, 'wb') as fp:
             fp.write(content)
@@ -166,7 +174,7 @@ class UI(object):
 
     def select(self, choices):
         if not choices:
-            raise Exception("no choices!")
+            raise Error("Internal error: no choices!")
 
         if len(choices) == 1 or self.args.batch:
             result = 1
@@ -181,15 +189,15 @@ class UI(object):
             while True:
                 try:
                     result = int(raw_input('> '))
+
                 except ValueError:
                     result = None
-                except KeyboardInterrupt as e:
-                    print e
-                    exit(1)
-                if not result or not 1 <= result <= len(choices):
-                    print "bad response"
-                else:
+
+                if result and 1 <= result <= len(choices):
                     break
+
+                else:
+                    print "Bad response"
 
         result = choices[result - 1]
         print result
@@ -261,10 +269,7 @@ class UI(object):
             if search_results:
                 todownload = self.episode(search_results, args.language,
                                           release)
-                try:
-                    todownload.download(filename)
-                except Exception, e:
-                    print 'Error: ', e
+                todownload.download(filename)
 
             else:
                 print 'No result'
@@ -337,32 +342,50 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description='Downloads SRT files from '
                                      'addic7ed.com.')
+
     parser.add_argument('file', nargs='+',
                         help='Video file name')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Print some debugging informations')
+
     parser.add_argument('-q', '--query',
                         help='Query (default: based on the filename)')
+
     parser.add_argument('-r', '--release', action='append', default=[],
                         help='Release (default: based on the filename)')
-    # parser.add_argument('-p', '--play', action='store_true',
-    #         help='Play the video after loading subtitles')
-    parser.add_argument('-o', '--overwrite', action='store_true',
-                        help='Overwrite the original SRT file without asking')
-    parser.add_argument('-i', '--ignore', action='store_true',
-                        help='Ignore the original SRT file without asking')
+
     parser.add_argument('-l', '--language', action='append', default=[],
                         help='Auto select language (could be specified more '
                         'than one time for fallbacks)')
+
+    parser.add_argument('-o', '--overwrite', action='store_true',
+                        help='Overwrite the original SRT file without asking')
+
+    parser.add_argument('-i', '--ignore', action='store_true',
+                        help='Ignore the original SRT file without asking')
+
     parser.add_argument('-b', '--batch', action='store_true',
                         help='Batch mode: do not ask anything, get the best '
                         'matching subtitle')
     parser.add_argument('-H', '--hearing-impaired', action='store_true',
                         help='Prefer hearing impaired version')
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='Print some debugging informations')
     args = parser.parse_args()
 
-    for file in args.file:
-        UI(args, file).launch()
+    try:
+        for file in args.file:
+            try:
+                UI(args, file).launch()
+            except Error as e:
+                print 'Error:', e
+
+    except FatalError as e:
+        print 'Fatal error:', e
+        exit(1)
+
+    except KeyboardInterrupt:
+        print 'Aborted by user'
+        exit(1)
 
 
 if __name__ == '__main__':
