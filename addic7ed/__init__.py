@@ -96,7 +96,6 @@ class Episode(object):
 
             result.append(version)
 
-        result.sort(key=str)
         return result
 
 
