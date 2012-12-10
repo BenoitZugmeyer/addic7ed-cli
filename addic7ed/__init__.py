@@ -172,11 +172,15 @@ class UI(object):
         self.args = args
         self.filename = filename
 
+    @property
+    def batch(self):
+        return self.args.batch or self.args.brute_batch
+
     def select(self, choices):
         if not choices:
             raise Error("Internal error: no choices!")
 
-        if len(choices) == 1 or self.args.batch:
+        if len(choices) == 1 or self.batch:
             result = 1
 
         else:
@@ -203,12 +207,6 @@ class UI(object):
         print result
         return result
 
-    def search(self, query):
-        results = Episode.search(query)
-
-        if results:
-            return self.select(results)
-
     def episode(self, episode, user_languages=[], user_releases=[]):
         episode.fetch_versions()
         versions = episode.filter_versions(user_languages, user_releases, True)
@@ -217,7 +215,7 @@ class UI(object):
     def confirm(self, question):
         question += ' [yn]> '
 
-        if self.args.batch:
+        if self.batch:
             return True
 
         while True:
@@ -265,10 +263,15 @@ class UI(object):
                     query=query
                 )
 
-            search_results = self.search(query)
+            search_results = Episode.search(query)
+
             if search_results:
-                todownload = self.episode(search_results, args.language,
-                                          release)
+                if self.args.batch and len(search_results) > 1:
+                    raise Error('More than one result, aborting')
+
+                episode = self.select(search_results)
+
+                todownload = self.episode(episode, args.language, release)
                 todownload.download(filename)
 
             else:
@@ -367,7 +370,14 @@ def main():
 
     parser.add_argument('-b', '--batch', action='store_true',
                         help='Batch mode: do not ask anything, get the best '
-                        'matching subtitle')
+                        'matching subtitle. Cancel if the search returns more '
+                        'than one result')
+
+    parser.add_argument('-bb', '--brute-batch', action='store_true',
+                        help='Batch mode: do not ask anything, get the best '
+                        'matching subtitle. Use the first result of the '
+                        'search')
+
     parser.add_argument('-H', '--hearing-impaired', action='store_true',
                         help='Prefer hearing impaired version')
     args = parser.parse_args()
