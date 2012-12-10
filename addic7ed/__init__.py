@@ -78,6 +78,7 @@ class Episode(object):
 
     def filter_versions(self, languages=[], release=set(), completed=True,
                         hearing_impaired=False):
+        release = complete_release(release)
         for version in self.versions:
             version.weight = 0
             version.match_languages(languages)
@@ -107,7 +108,8 @@ class Version(object):
         self.release = release
         self.infos = infos
         self.completeness = completeness
-        self.release_hash = string_set(infos) | string_set(release)
+        self.release_hash = complete_release(string_set(infos) |
+                                             string_set(release))
         self.hearing_impaired = hearing_impaired
         self.weight = 0
 
@@ -293,6 +295,19 @@ def file_to_query(filename):
     query = normalize_whitespace(' '.join((basename, episode)))
     release = string_set(release)
     return query, release
+
+
+def complete_release(release):
+    equivalences = (
+        set(('lol', 'sys', 'dimension')),
+        set(('xii', 'asap', 'immerse')),
+    )
+
+    for equivalence in equivalences:
+        if release & equivalence:
+            release |= equivalence
+
+    return release
 
 
 def remove_extension(filename):
