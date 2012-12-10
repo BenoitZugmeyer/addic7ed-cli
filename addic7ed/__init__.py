@@ -285,7 +285,7 @@ def file_to_query(filename):
     basename = re.sub(r'\bdont\b', 'don\'t', basename)
     basename = re.sub(r'\bcsi new york\b', 'csi ny', basename)
 
-    episode = re.search(r'\S*0+(\d+)[xe](\d+)', basename) or \
+    episode = re.search(r'\S*?0*(\d+)[xe](\d+)', basename) or \
         re.search(r'(\d+)', basename)
 
     if episode:
