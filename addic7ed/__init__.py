@@ -29,18 +29,9 @@ def get(url, raw=False, **params):
 class Episode(object):
 
     @classmethod
-    def search(cls, query, match_episode=False):
-        if match_episode:
-            match_episode = extract_episode(query)[1]
-
+    def search(cls, query):
         links = get('/search.php', search=query, submit='Search')('.tabel a')
-        result = []
-        for link in links:
-            title = link.text
-            if not match_episode or extract_episode(title)[1] == match_episode:
-                result.append(cls(link.attrib['href'], title))
-
-        return result
+        return [cls(link.attrib['href'], link.text) for link in links]
 
     def __init__(self, url, title=None):
         self.url = url
@@ -55,9 +46,6 @@ class Episode(object):
 
     def __str__(self):
         return unicode(self).encode('utf-8')
-
-    def __repr__(self):
-        return '<Episode {}>'.format(self)
 
     def add_version(self, *args):
         self.versions.append(Version(*args))
@@ -276,7 +264,7 @@ class UI(object):
                     query=query
                 )
 
-            search_results = Episode.search(query, not args.query)
+            search_results = Episode.search(query)
 
             if search_results:
                 if self.args.batch and len(search_results) > 1:
@@ -308,13 +296,14 @@ def file_to_query(filename):
     basename = re.sub(r'\bdont\b', 'don\'t', basename)
     basename = re.sub(r'\bcsi new york\b', 'csi ny', basename)
 
-    episode = extract_episode(basename)
+    episode = re.search(r'\S*?0*(\d+)[xe](\d+)', basename) or \
+        re.search(r'(\d+)', basename)
 
     if episode:
-        index = basename.find(episode[0])
-        release = basename[index + len(episode[0]):]
+        index = basename.find(episode.group(0))
+        release = basename[index + len(episode.group(0)):]
         basename = basename[:index]
-        episode = episode[1]
+        episode = 'x'.join(episode.groups())
 
     else:
         episode = ''
@@ -350,14 +339,6 @@ def normalize_whitespace(string):
 def string_set(string):
     string = normalize_whitespace(string.lower())
     return set(string.split(' ')) if string else set()
-
-
-def extract_episode(string):
-    episode = re.search(r'\S*?0*(\d+)[xeXE](\d+)', string) or \
-        re.search(r'(\d+)', string)
-
-    if episode:
-        return episode.group(0), 'x'.join(episode.groups())
 
 
 def main():
