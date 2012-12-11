@@ -17,6 +17,14 @@ class TestAddic7ed(TestCase):
                              'Homeland - 02x02 - Beirut Is Back')
         ])
 
+    def test_search_wrong_episode(self):
+        result = addic7ed.Episode.search('redneck island 2x05', True)
+        self.assertEqual(result, [])
+
+        # One false result
+        result = addic7ed.Episode.search('redneck island 2x05', False)
+        self.assertEqual(len(result), 1)
+
     def file_to_query(self, filename, query, version=set()):
         q, v = addic7ed.file_to_query(filename)
         self.assertEqual(query, q)
