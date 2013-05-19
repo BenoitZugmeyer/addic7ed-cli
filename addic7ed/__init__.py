@@ -297,13 +297,23 @@ def file_to_query(filename):
     basename = re.sub(r'\bcsi new york\b', 'csi ny', basename)
 
     episode = re.search(r'\S*?0*(\d+)[xe](\d+)', basename) or \
-        re.search(r'(\d+)', basename)
+        re.search(r'()(\d+)', basename)
 
     if episode:
         index = basename.find(episode.group(0))
         release = basename[index + len(episode.group(0)):]
         basename = basename[:index]
-        episode = 'x'.join(episode.groups())
+        season = episode.group(1)
+        number = episode.group(2)
+
+        if not season and len(number) >= 3:
+            season = number[1]
+            number = number[1:]
+
+        if season:
+            episode = 'x'.join((season, number))
+        else:
+            episode = number
 
     else:
         episode = ''
