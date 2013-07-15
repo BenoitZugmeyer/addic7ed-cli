@@ -65,6 +65,12 @@ class TestAddic7ed(TestCase):
         self.assertFalse(versions[0].hearing_impaired)
         self.assertTrue(versions[1].hearing_impaired)
 
+    def test_unicode_episode(self):
+        addic7ed.Episode.search('family guy 10x12')[0].fetch_versions()
+
+        # doing another query after that should not raise any exception
+        addic7ed.Episode.search('family guy 10x11')
+
     def test_complete_release(self):
         self.assertEqual(s('immerse', 'asap', 'xii', '720p'),
                          addic7ed.complete_release(s('immerse', '720p')))

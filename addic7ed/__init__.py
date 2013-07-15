@@ -4,6 +4,7 @@ import os.path
 from urlparse import urljoin
 from pyquery import PyQuery as query
 import requests
+import urllib
 
 import re
 
@@ -31,7 +32,10 @@ class Episode(object):
     @classmethod
     def search(cls, query):
         links = get('/search.php', search=query, submit='Search')('.tabel a')
-        return [cls(link.attrib['href'], link.text) for link in links]
+        return [
+            cls(urllib.quote(link.attrib['href'].encode('utf8')), link.text)
+            for link in links
+        ]
 
     def __init__(self, url, title=None):
         self.url = url
