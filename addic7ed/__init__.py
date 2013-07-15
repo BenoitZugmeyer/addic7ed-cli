@@ -5,6 +5,7 @@ from urlparse import urljoin
 from pyquery import PyQuery as query
 import requests
 import urllib
+import xml.etree.ElementTree as ET
 
 import re
 
@@ -285,7 +286,28 @@ class UI(object):
         print
 
 
+def get_file_alias(filename):
+
+    directory, basename = os.path.split(filename)
+
+    filelist_path = os.path.join(directory, 'filelist')
+
+    if os.path.isfile(filelist_path):
+        basename = remove_extension(basename)
+        try:
+            tree = ET.parse(filelist_path)
+        except Exception as e:
+            print 'Warning: unable to parse {}: {}'.format(filelist_path, e)
+        else:
+            for record in tree.findall('.//record'):
+                if remove_extension(record.get('to')) == basename:
+                    return record.get('from')
+
+    return filename
+
+
 def file_to_query(filename):
+    filename = get_file_alias(filename)
     basename = os.path.basename(filename).lower()
     basename = remove_extension(basename)
     basename = normalize_whitespace(basename)
@@ -358,8 +380,13 @@ def string_set(string):
 def main():
 
     import argparse
-    parser = argparse.ArgumentParser(description='Downloads SRT files from '
-                                     'addic7ed.com.')
+    parser = argparse.ArgumentParser(
+        description='Downloads SRT files from addic7ed.com.',
+        epilog='Note: video-organizer format is supported. If a "filelist" '
+        'file is next to an episode, it will use it to extract its real name '
+        'and forge the good query. See \n'
+        'https://github.com/JoelSjogren/video-organizer for further '
+        'informations.')
 
     parser.add_argument('file', nargs='+',
                         help='Video file name.')
