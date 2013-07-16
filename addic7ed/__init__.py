@@ -239,8 +239,11 @@ class UI(object):
         args = self.args
         filename = self.filename
 
-        if os.path.isfile(filename) and not filename.endswith('.srt'):
-            filename = remove_extension(filename) + '.srt'
+        if os.path.isfile(filename):
+            if filename.endswith('.part'):
+                filename = remove_extension(filename)
+            if not filename.endswith('.srt'):
+                filename = remove_extension(filename) + '.srt'
 
         print 'Target SRT file:', filename
         ignore = False
