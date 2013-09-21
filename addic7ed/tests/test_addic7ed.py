@@ -25,10 +25,10 @@ class TestAddic7ed(TestCase):
     def test_file_to_query(self):
         self.file_to_query('Homeland.S02E02.PROPER.720p.HDTV.x264-EVOLVE.mkv',
                            'homeland 2x02',
-                           s('proper', '720p', 'hdtv', 'x264', 'evolve'))
+                           s('proper', 'evolve'))
         self.file_to_query('CSI.S13E06.720p.HDTV.X264-DIMENSION.mkv',
                            'csi 13x06',
-                           s('720p', 'hdtv', 'x264', 'dimension'))
+                           s('dimension', 'sys', 'lol'))
 
     def test_file_to_query_stopword(self):
         self.file_to_query('Foo.and.Bar.S02E23.PLOP.mkv',
@@ -38,13 +38,13 @@ class TestAddic7ed(TestCase):
     def test_file_to_query_exceptions(self):
         self.file_to_query('CSI.New.York.S09E10.720p.HDTV.X264-YOLO.mkv',
                            'csi ny 9x10',
-                           s('hdtv', '720p', 'hdtv', 'x264', 'yolo'))
+                           s('yolo'))
 
     def test_file_to_query_number_in_title(self):
         self.file_to_query('Dont.Apartment.23.S02E05.720p.HDTV.X264'
                            '-DIMENSION.mkv',
                            'don\'t apartment 23 2x05',
-                           s('720p', 'hdtv', 'x264', 'dimension'))
+                           s('dimension', 'sys', 'lol'))
 
     def test_file_to_query_noseason(self):
         self.file_to_query('Foo.23.mkv', 'foo 23')
@@ -71,10 +71,10 @@ class TestAddic7ed(TestCase):
         # doing another query after that should not raise any exception
         addic7ed.Episode.search('family guy 10x11')
 
-    def test_complete_release(self):
-        self.assertEqual(s('immerse', 'asap', 'xii', '720p'),
-                         addic7ed.complete_release(s('immerse', '720p')))
+    def test_normalize_release(self):
+        self.assertEqual(s('immerse', 'asap', 'xii'),
+                         addic7ed.normalize_release(s('immerse', '720p')))
 
         self.assertEqual(s('lol', 'sys', 'dimension'),
-                         addic7ed.complete_release(s('lol')))
-        self.assertEqual(s('mdr'), addic7ed.complete_release(s('mdr')))
+                         addic7ed.normalize_release(s('lol')))
+        self.assertEqual(s('mdr'), addic7ed.normalize_release(s('mdr')))
