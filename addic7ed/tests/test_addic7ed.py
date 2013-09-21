@@ -55,6 +55,10 @@ class TestAddic7ed(TestCase):
     def test_file_to_query_threenumbers(self):
         self.file_to_query('The.Serie.223.MDR.mkv', 'the serie 2x23', s('mdr'))
 
+    def test_file_to_query_season_episode(self):
+        self.file_to_query('The Serie Season 4 Episode 03 - Foo',
+                           'the serie 4x03', s('foo'))
+
     def test_episode(self):
         result = addic7ed.Episode('serie/Homeland/2/2/Beirut_Is_Back')
         result.fetch_versions()
