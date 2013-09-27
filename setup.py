@@ -16,7 +16,7 @@ setup(name='addic7ed',
       license='MIT',
       packages=['addic7ed'],
       install_requires=[
-          'pyquery',
+          'pyquery>=1.2.4',
           'requests==0.14.1',  # 0.14.2 can't be installed through pip
       ],
       entry_points={
