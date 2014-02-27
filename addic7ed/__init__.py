@@ -141,6 +141,9 @@ class Version(object):
         self.weight += weight
 
     def match_release(self, release):
+        if not release:
+            return
+
         self.weight += len(release & self.release_hash) / float(len(release))
 
     def match_completeness(self, completeness):
