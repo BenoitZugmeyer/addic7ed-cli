@@ -1,0 +1,28 @@
+# Maintainer: Blat <blatiere@gmail.com>
+# Contributor: Benoît Zugmeyer <benoit@zugmeyer.com>
+
+pkgname=addic7ed-cli
+pkgver=0.1.8
+pkgrel=1
+pkgdesc="Addic7ed command-line interface"
+arch=('any')
+url="https://github.com/BenoitZugmeyer/addic7ed-cli"
+license=('Expat')
+groups=()
+depends=('python2'
+         'python2-pyquery'
+         'python2-requests')
+makedepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=(!emptydirs)
+install=
+source=("http://github.com/BenoitZugmeyer/${pkgname}/archive/v${pkgver}.zip")
+md5sums=('4d3226f90bc5c3e09e1616d8a5a01caf')
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  python2 setup.py install --root="$pkgdir/" --optimize=1
+}
