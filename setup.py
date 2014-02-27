@@ -17,7 +17,7 @@ setup(name='addic7ed',
       packages=['addic7ed'],
       install_requires=[
           'pyquery>=1.2.4',
-          'requests==2.2.1',
+          'requests>=2.2.1',
       ],
       entry_points={
           'console_scripts': ['addic7ed=addic7ed.__init__:main'],
