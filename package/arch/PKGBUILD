@@ -1,6 +1,3 @@
-# Maintainer: Blat <blatiere@gmail.com>
-# Contributor: Benoît Zugmeyer <benoit@zugmeyer.com>
-
 pkgname=addic7ed-cli
 pkgver=0.1.8
 pkgrel=1
