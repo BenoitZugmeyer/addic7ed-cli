@@ -1,5 +1,5 @@
 pkgname=addic7ed-cli
-pkgver=0.1.8
+pkgver=0.1.9
 pkgrel=1
 pkgdesc="Addic7ed command-line interface"
 arch=('any')
