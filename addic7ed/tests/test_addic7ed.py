@@ -13,8 +13,24 @@ class TestAddic7ed(TestCase):
     def test_search(self):
         result = addic7ed.Episode.search('homeland 2x02')
         self.assertEqual(result, [
-            addic7ed.Episode('serie/Homeland/2/2/Beirut_Is_Back',
-                             'Homeland - 02x02 - Beirut Is Back')
+            addic7ed.Episode(
+                'http://www.addic7ed.com/serie/Homeland/2/2/Beirut_Is_Back',
+                'Homeland - 02x02 - Beirut Is Back')
+        ])
+
+    def test_search_multiple(self):
+        result = addic7ed.Episode.search('black mirror 01x')
+        self.assertEqual(result, [
+            addic7ed.Episode(
+                'serie/Black_Mirror_%25282011%2529/1/1/The_National_Anthem',
+                'Black Mirror (2011) - 01x01 - The National Anthem'),
+            addic7ed.Episode(
+                'serie/Black_Mirror_%25282011%2529/1/2/15_Million_Merits',
+                'Black Mirror (2011) - 01x02 - 15 Million Merits'),
+            addic7ed.Episode(
+                'serie/Black_Mirror_%25282011%2529/1/3/'
+                'The_Entire_History_of_You',
+                'Black Mirror (2011) - 01x03 - The Entire History of You'),
         ])
 
     def file_to_query(self, filename, query, version=set()):

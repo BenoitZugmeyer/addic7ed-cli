@@ -23,20 +23,24 @@ class FatalError(Exception):
 def get(url, raw=False, **params):
     global last_url
     url = urljoin(last_url, url)
-    request = requests.get(url, headers={'Referer': last_url}, params=params)
-    last_url = url
-    return request.content if raw else query(request.content)
+    response = requests.get(url, headers={'Referer': last_url}, params=params)
+    last_url = response.url
+    return response.content if raw else query(response.content)
 
 
 class Episode(object):
 
     @classmethod
     def search(cls, query):
-        links = get('/search.php', search=query, submit='Search')('.tabel a')
-        return [
-            cls(urllib.quote(link.attrib['href'].encode('utf8')), link.text)
-            for link in links
-        ]
+        results = get('/search.php', search=query, submit='Search')
+        if '/search.php' in last_url:
+            return [
+                cls(urllib.quote(link.attrib['href'].encode('utf8')), link.text)
+                for link in results('.tabel a')
+            ]
+        else:
+            title = results('.titulo').contents()[0].strip()
+            return [ cls(last_url, title) ]
 
     def __init__(self, url, title=None):
         self.url = url
@@ -48,6 +52,9 @@ class Episode(object):
 
     def __unicode__(self):
         return self.title
+
+    def __repr__(self):
+        return 'Episode(%s, %s)' % (repr(self.url), repr(self.title))
 
     def __str__(self):
         return unicode(self).encode('utf-8')
