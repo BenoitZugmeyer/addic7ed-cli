@@ -470,6 +470,8 @@ def main():
 
     import argparse
     import textwrap
+    import pkg_resources
+    version = pkg_resources.require('addic7ed')[0].version
 
     epilog = '''
     Configuration file:
@@ -508,6 +510,9 @@ def main():
 
     parser.add_argument('file', nargs='+',
                         help='Video file name.')
+
+    parser.add_argument('-V', '--version', action='version',
+                        version='%%(prog)s version %s' % version)
 
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Print some debugging informations.')
