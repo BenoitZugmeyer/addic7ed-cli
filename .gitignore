@@ -8,3 +8,6 @@ htmlcov
 venv
 .coverage
 *~
+.project
+.settings
+.pydevproject
