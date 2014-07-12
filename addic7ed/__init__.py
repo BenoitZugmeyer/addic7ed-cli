@@ -247,13 +247,7 @@ class UI(object):
     def launch(self):
         print '-' * 30
         args = self.args
-        filename = self.filename
-
-        if os.path.isfile(filename):
-            if filename.endswith('.part'):
-                filename = remove_extension(filename)
-            if not filename.endswith('.srt'):
-                filename = remove_extension(filename) + '.srt'
+        filename = remove_extension(self.filename) + '.srt' 
 
         print 'Target SRT file:', filename
         ignore = False
@@ -382,7 +376,10 @@ def normalize_release(release):
 
 
 def remove_extension(filename):
-    return filename.rpartition('.')[0] if '.' in filename else filename
+    filename, ext = os.path.splitext(filename)
+    if ext in ['.part','.!qB']:
+        filename, ext = os.path.splitext(filename)
+    return filename
 
 
 def normalize_whitespace(string):
