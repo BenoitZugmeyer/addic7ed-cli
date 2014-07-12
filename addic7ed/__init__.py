@@ -36,12 +36,13 @@ class Episode(object):
         results = get('/search.php', search=query, submit='Search')
         if '/search.php' in last_url:
             return [
-                cls(urllib.quote(link.attrib['href'].encode('utf8')), link.text)
+                cls(urllib.quote(link.attrib['href'].encode('utf8')),
+                    link.text)
                 for link in results('.tabel a')
             ]
         else:
             title = results('.titulo').contents()[0].strip()
-            return [ cls(last_url, title) ]
+            return [cls(last_url, title)]
 
     def __init__(self, url, title=None):
         self.url = url
@@ -247,7 +248,7 @@ class UI(object):
     def launch(self):
         print '-' * 30
         args = self.args
-        filename = remove_extension(self.filename) + '.srt' 
+        filename = remove_extension(self.filename) + '.srt'
 
         print 'Target SRT file:', filename
         ignore = False
@@ -377,7 +378,7 @@ def normalize_release(release):
 
 def remove_extension(filename):
     filename, ext = os.path.splitext(filename)
-    if ext in ['.part','.!qB']:
+    if ext in ('.part', '.!qB'):
         filename, ext = os.path.splitext(filename)
     return filename
 
