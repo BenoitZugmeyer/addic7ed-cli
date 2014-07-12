@@ -376,7 +376,10 @@ def normalize_release(release):
 
 
 def remove_extension(filename):
-    return os.path.splitext(filename)[0]
+    filename, ext = os.path.splitext(filename)
+    if ext in ['.part','.!qB']:
+        filename, ext = os.path.splitext(filename)
+    return filename
 
 
 def normalize_whitespace(string):
