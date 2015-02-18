@@ -43,10 +43,10 @@ class Episode(object):
         for i, table in enumerate(tables[2:-1:2]):
             trs = query(table)('tr')
 
-            release = trs.find('.NewsTitle').text().partition(',')[0]
+            release = encode(trs.find('.NewsTitle').text().partition(',')[0])
             release = re.sub('version ', '', release, 0, re.I)
 
-            infos = trs.next().find('.newsDate').eq(0).text()
+            infos = encode(trs.next().find('.newsDate').eq(0).text())
             infos = re.sub('(?:should)? works? with ', '', infos, 0, re.I)
 
             for tr in trs[2:]:
@@ -55,14 +55,14 @@ class Episode(object):
                 if not language:
                     continue
 
-                completeness = language.next().text().partition(' ')[0]
-                language = language.text()
+                completeness = encode(language.next().text().partition(' ')[0])
+                language = encode(language.text())
                 download = tr('a[href*=updated]') or tr('a[href*=original]')
                 if not download:
                     continue
                 hearing_impaired = \
                     bool(tr.next().find('img[title="Hearing Impaired"]'))
-                download = download.attr.href
+                download = encode(download.attr.href)
                 self.add_version(download, language, release, infos,
                                  completeness, hearing_impaired)
 
@@ -100,5 +100,5 @@ def search(query):
             for link in results('.tabel a')
         ]
     else:
-        title = results('.titulo').contents()[0].strip()
+        title = encode(results('.titulo').contents()[0]).strip()
         return [Episode(last_url, title)]
