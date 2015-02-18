@@ -49,13 +49,10 @@ class Version(object):
         if hearing_impaired == self.hearing_impaired:
             self.weight += 0.1
 
-    def __unicode__(self):
-        return u'{language} - {release} {infos} {completeness} {hi}' \
+    def __str__(self):
+        return '{language} - {release} {infos} {completeness} {hi}' \
             .format(hi='HI' if self.hearing_impaired else '',
                     **self.__dict__)
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
 
     def download(self, filename):
         content = get(self.url, raw=True)

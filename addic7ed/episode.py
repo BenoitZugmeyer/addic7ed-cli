@@ -1,12 +1,17 @@
 
 from pyquery import PyQuery as query
 import re
-import urllib
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 from addic7ed.request import get, get_last_url
 from addic7ed.version import Version
+from addic7ed.compat import encode
 
-__all__ = ['search']
+__all__ = ['search', 'Episode']
+
 
 class Episode(object):
 
@@ -18,14 +23,11 @@ class Episode(object):
     def __eq__(self, other):
         return self.url == other.url and self.title == other.title
 
-    def __unicode__(self):
-        return self.title
-
     def __repr__(self):
         return 'Episode(%s, %s)' % (repr(self.url), repr(self.title))
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return self.title
 
     def add_version(self, *args):
         self.versions.append(Version(*args))
@@ -93,8 +95,8 @@ def search(query):
     last_url = get_last_url()
     if '/search.php' in last_url:
         return [
-            Episode(urllib.quote(link.attrib['href'].encode('utf8')),
-                    link.text)
+            Episode(quote(encode(link.attrib['href'])),
+                    encode(link.text))
             for link in results('.tabel a')
         ]
     else:

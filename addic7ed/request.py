@@ -1,12 +1,15 @@
 
-from pyquery import PyQuery as query
-from urlparse import urljoin
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
+
 import requests
-
-
-last_url = 'http://www.addic7ed.com/'
+from pyquery import PyQuery as query
 
 __all__ = ['get', 'get_last_url']
+
+last_url = 'http://www.addic7ed.com/'
 
 
 def get(url, raw=False, **params):

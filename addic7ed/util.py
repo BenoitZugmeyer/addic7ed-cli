@@ -2,6 +2,8 @@ import os
 import re
 import xml.etree.ElementTree as ET
 
+from addic7ed.compat import echo
+
 
 def normalize_release(release):
     equivalences = (
@@ -94,7 +96,7 @@ def get_file_alias(filename):
         try:
             tree = ET.parse(filelist_path)
         except Exception as e:
-            print 'Warning: unable to parse {}: {}'.format(filelist_path, e)
+            echo('Warning: unable to parse {}: {}'.format(filelist_path, e))
         else:
             for record in tree.findall('.//record'):
                 if remove_extension(record.get('to')) == basename:

@@ -1,8 +1,13 @@
 #!/usr/bin/python2
 
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
 import os.path
 
+from addic7ed.compat import echo, basestring
 from addic7ed.ui import UI
 from addic7ed.error import Error, FatalError
 
@@ -42,7 +47,7 @@ class Arguments(object):
         self.default_language = []
 
         if configuration_path is not None:
-            config = ConfigParser.ConfigParser(allow_no_value=True)
+            config = configparser.ConfigParser(allow_no_value=True)
             config.read(configuration_path)
 
             if config.has_section('flags'):
@@ -175,14 +180,14 @@ def main():
             try:
                 UI(args, file).launch()
             except Error as e:
-                print 'Error:', e
+                echo('Error:', e)
 
     except FatalError as e:
-        print 'Fatal error:', e
+        echo('Fatal error:', e)
         exit(1)
 
     except KeyboardInterrupt:
-        print 'Aborted by user'
+        echo('Aborted by user')
         exit(1)
 
 

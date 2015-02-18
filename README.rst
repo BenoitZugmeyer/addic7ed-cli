@@ -2,8 +2,6 @@ This is a little command-line utility to fetch subtitles from addic7ed.
 
 **Support addic7ed**, donate_!
 
-Python 2.x only.
-
 Install it with::
 
     $ pip install https://github.com/BenoitZugmeyer/addic7ed-cli/archive/master.zip

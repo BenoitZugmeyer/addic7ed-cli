@@ -1,8 +1,10 @@
+
 import os
 
 from addic7ed.error import Error
 from addic7ed.util import remove_extension, file_to_query, string_set
 from addic7ed.episode import search
+from addic7ed.compat import echo, input
 
 
 class UI(object):
@@ -26,12 +28,12 @@ class UI(object):
             just = len(str(len(choices)))
             index = 1
             for choice in choices:
-                print str(index).rjust(just), ':', choice
+                echo(str(index).rjust(just), ':', choice)
                 index += 1
 
             while True:
                 try:
-                    result = int(raw_input('> '))
+                    result = int(input('> '))
 
                 except ValueError:
                     result = None
@@ -40,10 +42,10 @@ class UI(object):
                     break
 
                 else:
-                    print "Bad response"
+                    echo("Bad response")
 
         result = choices[result - 1]
-        print result
+        echo(result)
         return result
 
     def episode(self, episode, languages=[], releases=[]):
@@ -59,31 +61,31 @@ class UI(object):
             return True
 
         while True:
-            answer = raw_input(question)
+            answer = input(question)
             if answer in 'yn':
                 break
 
             else:
-                print 'Bad answer'
+                echo('Bad answer')
 
         return answer == 'y'
 
     def launch(self):
-        print '-' * 30
+        echo('-' * 30)
         args = self.args
         filename = remove_extension(self.filename) + '.srt'
 
-        print 'Target SRT file:', filename
+        echo('Target SRT file:', filename)
         ignore = False
         if os.path.isfile(filename):
-            print 'File exists.',
+            echo('File exists.', end='')
             if args.ignore or (not args.overwrite and
                                not self.confirm('Overwrite?')):
-                print 'Ignoring.'
+                echo('Ignoring.')
                 ignore = True
 
             else:
-                print 'Overwriting.'
+                echo('Overwriting.')
 
         if not ignore:
             query, release = file_to_query(filename)
@@ -95,10 +97,10 @@ class UI(object):
                 release = string_set(args.release)
 
             if args.verbose:
-                print 'Using query "{query}" and release "{release}"'.format(
+                echo('Using query "{query}" and release "{release}"'.format(
                     release=' '.join(release),
                     query=query
-                )
+                ))
 
             search_results = search(query)
 
@@ -112,6 +114,6 @@ class UI(object):
                 todownload.download(filename)
 
             else:
-                print 'No result'
+                echo('No result')
 
-        print
+        echo()
