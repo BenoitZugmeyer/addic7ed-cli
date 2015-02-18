@@ -1,9 +1,11 @@
 from unittest import TestCase
 
-import addic7ed
-#from pprint import pprint
+from addic7ed.episode import Episode, search
+from addic7ed.util import file_to_query, normalize_release
 
-s = lambda *args: set(args)
+
+def s(*args):
+    return set(args)
 
 
 class TestAddic7ed(TestCase):
@@ -11,30 +13,30 @@ class TestAddic7ed(TestCase):
     maxDiff = None
 
     def test_search(self):
-        result = addic7ed.Episode.search('homeland 2x02')
+        result = search('homeland 2x02')
         self.assertEqual(result, [
-            addic7ed.Episode(
+            Episode(
                 'http://www.addic7ed.com/serie/Homeland/2/2/Beirut_Is_Back',
                 'Homeland - 02x02 - Beirut Is Back')
         ])
 
     def test_search_multiple(self):
-        result = addic7ed.Episode.search('black mirror 01x')
+        result = search('black mirror 01x')
         self.assertEqual(result, [
-            addic7ed.Episode(
+            Episode(
                 'serie/Black_Mirror_%25282011%2529/1/1/The_National_Anthem',
                 'Black Mirror (2011) - 01x01 - The National Anthem'),
-            addic7ed.Episode(
+            Episode(
                 'serie/Black_Mirror_%25282011%2529/1/2/15_Million_Merits',
                 'Black Mirror (2011) - 01x02 - 15 Million Merits'),
-            addic7ed.Episode(
+            Episode(
                 'serie/Black_Mirror_%25282011%2529/1/3/'
                 'The_Entire_History_of_You',
                 'Black Mirror (2011) - 01x03 - The Entire History of You'),
         ])
 
     def file_to_query(self, filename, query, version=set()):
-        q, v = addic7ed.file_to_query(filename)
+        q, v = file_to_query(filename)
         self.assertEqual(query, q)
         self.assertEqual(version, v)
 
@@ -77,7 +79,7 @@ class TestAddic7ed(TestCase):
                            'the serie 4x03', s('foo'))
 
     def test_episode(self):
-        result = addic7ed.Episode('serie/Homeland/2/2/Beirut_Is_Back')
+        result = Episode('serie/Homeland/2/2/Beirut_Is_Back')
         result.fetch_versions()
         self.assertEqual(result.title, 'Homeland - 02x02 - Beirut Is Back')
         versions = result.filter_versions(['english', 'french'], s('evolve'))
@@ -87,15 +89,15 @@ class TestAddic7ed(TestCase):
         self.assertTrue(versions[1].hearing_impaired)
 
     def test_unicode_episode(self):
-        addic7ed.Episode.search('family guy 10x12')[0].fetch_versions()
+        search('family guy 10x12')[0].fetch_versions()
 
         # doing another query after that should not raise any exception
-        addic7ed.Episode.search('family guy 10x11')
+        search('family guy 10x11')
 
     def test_normalize_release(self):
         self.assertEqual(s('immerse', 'asap', 'xii'),
-                         addic7ed.normalize_release(s('immerse', '720p')))
+                         normalize_release(s('immerse', '720p')))
 
         self.assertEqual(s('lol', 'sys', 'dimension'),
-                         addic7ed.normalize_release(s('lol')))
-        self.assertEqual(s('mdr'), addic7ed.normalize_release(s('mdr')))
+                         normalize_release(s('lol')))
+        self.assertEqual(s('mdr'), normalize_release(s('mdr')))
