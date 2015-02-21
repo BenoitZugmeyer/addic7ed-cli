@@ -82,7 +82,7 @@ class SearchUI(UI):
         echo('Target SRT file:', filename)
         ignore = False
         if os.path.isfile(filename):
-            echo('File exists.', end='')
+            echo('File exists.', end=' ')
             if args.ignore or (not args.overwrite and
                                not self.confirm('Overwrite?')):
                 echo('Ignoring.')
