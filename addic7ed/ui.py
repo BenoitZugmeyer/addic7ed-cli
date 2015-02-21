@@ -9,9 +9,8 @@ from addic7ed.compat import echo, input
 
 class UI(object):
 
-    def __init__(self, args, filename):
+    def __init__(self, args):
         self.args = args
-        self.filename = filename
 
     @property
     def batch(self):
@@ -48,12 +47,6 @@ class UI(object):
         echo(result)
         return result
 
-    def episode(self, episode, languages=[], releases=[]):
-        episode.fetch_versions()
-        versions = episode.filter_versions(languages, releases, True,
-                                           self.args.hearing_impaired)
-        return self.select(versions)
-
     def confirm(self, question):
         question += ' [yn]> '
 
@@ -70,10 +63,19 @@ class UI(object):
 
         return answer == 'y'
 
-    def launch(self):
+
+class SearchUI(UI):
+
+    def episode(self, episode, languages=[], releases=[]):
+        episode.fetch_versions()
+        versions = episode.filter_versions(languages, releases, True,
+                                           self.args.hearing_impaired)
+        return self.select(versions)
+
+    def launch_file(self, filename):
         echo('-' * 30)
         args = self.args
-        filename = remove_extension(self.filename) + '.srt'
+        filename = remove_extension(filename) + '.srt'
 
         echo('Target SRT file:', filename)
         ignore = False
@@ -117,3 +119,10 @@ class UI(object):
                 echo('No result')
 
         echo()
+
+    def launch(self):
+        for file in self.args.file:
+            try:
+                self.launch_file(file)
+            except Error as e:
+                echo('Error:', e)

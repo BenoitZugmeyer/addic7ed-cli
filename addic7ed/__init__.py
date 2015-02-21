@@ -6,9 +6,10 @@ except ImportError:
     import ConfigParser as configparser
 
 import os.path
+import argparse
 
 from addic7ed.compat import echo, basestring
-from addic7ed.ui import UI
+from addic7ed.ui import SearchUI
 from addic7ed.error import Error, FatalError
 
 
@@ -42,6 +43,8 @@ class Arguments(object):
                 return config.getboolean('flags', name)
 
             return value is None
+
+        self.command = 'search'
 
         self.verbose = getflag('verbose')
         self.hearing_impaired = getflag('hearing-impaired')
@@ -79,11 +82,52 @@ class Arguments(object):
             self._language = language
 
 
+class ArgumentParser(object):
+
+    _parser = None
+    _subparsers = None
+
+    def __init__(self, **kwargs):
+        self._parser = argparse.ArgumentParser(**kwargs)
+        self._arggroup = self._parser
+        self._root_parser = self._parser
+
+    def configure_subparser(self, **kwargs):
+        if self._subparsers is None:
+            self._subparsers = self._parser.add_subparsers(**kwargs)
+
+    def add_subparser(self, *args, **kwargs):
+        self._parser = self._subparsers.add_parser(*args, **kwargs)
+        self._arggroup = self._parser
+
+    def add_argument(self, *args, **kwargs):
+        self._arggroup.add_argument(*args, **kwargs)
+
+    def add_argument_group(self, *args, **kwargs):
+        self._arggroup = self._parser.add_argument_group(*args, **kwargs)
+
+    def parse_args(self, *args, **kwargs):
+        self._root_parser.parse_args(*args, **kwargs)
+
+
+def search(arguments):
+    SearchUI(arguments).launch()
+
+
+def login(arguments):
+    echo('login')
+
+
+def logout(arguments):
+    echo('logout')
+
+
 def main():
 
-    import argparse
     import textwrap
     import pkg_resources
+    import sys
+
     version = pkg_resources.require('addic7ed')[0].version
 
     epilog = '''
@@ -116,13 +160,10 @@ def main():
       informations.
     '''
 
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description='Downloads SRT files from addic7ed.com.',
         epilog=textwrap.dedent(epilog),
         formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    parser.add_argument('file', nargs='+',
-                        help='Video file name.')
 
     parser.add_argument('-V', '--version', action='version',
                         version='%%(prog)s version %s' % version)
@@ -130,51 +171,70 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Print some debugging informations.')
 
-    custom = parser.add_argument_group('Query customization')
-    custom.add_argument('-q', '--query',
+    parser.configure_subparser(help='Command to run. If no command is given, '
+                               'the default is "search".',
+                               dest='command')
+
+    parser.add_subparser('search',
+                         help='Search for a subtitle and download it')
+
+    parser.add_argument('file', nargs='+',
+                        help='Video file name.')
+
+    parser.add_argument('-q', '--query',
                         help='Custom query. (default: based on the filename)')
 
-    custom.add_argument('-r', '--release',
+    parser.add_argument('-r', '--release',
                         help='Custom release. (default: based on the '
                         'filename)')
 
-    custom.add_argument('-l', '--language', action='append', default=[],
+    parser.add_argument('-l', '--language', action='append', default=[],
                         help='Prefer a language. (could be specified more '
                         'than one time for fallbacks)')
 
-    custom.add_argument('-H', '--hearing-impaired', action='store_true',
+    parser.add_argument('-H', '--hearing-impaired', action='store_true',
                         help='Prefer hearing impaired version.')
 
-    custom.add_argument('--no-hearing-impaired', dest='hearing_impaired',
+    parser.add_argument('--no-hearing-impaired', dest='hearing_impaired',
                         action='store_false')
 
-    batch = parser.add_argument_group('Automation')
-    batch.add_argument('-o', '--overwrite', action='store_true',
-                       help='Always overwrite the SRT if it exists.')
+    parser.add_argument('-o', '--overwrite', action='store_true',
+                        help='Always overwrite the SRT if it exists.')
 
-    batch.add_argument('-i', '--ignore', action='store_true',
-                       help='Never overwrite the SRT if it exists.')
+    parser.add_argument('-i', '--ignore', action='store_true',
+                        help='Never overwrite the SRT if it exists.')
 
-    batch.add_argument('-b', '--batch', action='store_true',
-                       help='Do not ask anything, get the best matching '
-                       'subtitle. Cancel if the search returns more than one '
-                       'result.')
+    parser.add_argument('-b', '--batch', action='store_true',
+                        help='Do not ask anything, get the best matching '
+                        'subtitle. Cancel if the search returns more than one '
+                        'result.')
 
-    batch.add_argument('-bb', '--brute-batch', action='store_true',
-                       help='Do not ask anything, get the best matching '
-                       'subtitle. Use the first result of the search.')
+    parser.add_argument('-bb', '--brute-batch', action='store_true',
+                        help='Do not ask anything, get the best matching '
+                        'subtitle. Use the first result of the search.')
 
-    args = Arguments()
-    args.read_defaults()
+    parser.add_subparser('login',
+                         help='Login on addic7ed.com. This is not required.')
 
-    parser.parse_args(namespace=args)
+    parser.add_subparser('logout',
+                         help='Logout from addic7ed.com.')
+    args = sys.argv[1:]
+
+    if args and not args[0].startswith('-') and \
+            args[0] not in ('search', 'login', 'logout'):
+        args[0:0] = ('search',)
+
+    namespace = Arguments()
+    namespace.read_defaults()
+
+    parser.parse_args(args=args, namespace=namespace)
 
     try:
-        for file in args.file:
-            try:
-                UI(args, file).launch()
-            except Error as e:
-                echo('Error:', e)
+        globals()[namespace.command](namespace)
+
+    except Error as e:
+        echo('Error:', e)
+        exit(1)
 
     except FatalError as e:
         echo('Fatal error:', e)
