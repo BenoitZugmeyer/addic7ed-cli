@@ -4,8 +4,6 @@ addic7ed-cli
 
 This is a little command-line utility to fetch subtitles from addic7ed.
 
-**Support addic7ed**, donate_!
-
 Install
 =======
 
@@ -83,6 +81,5 @@ video-organizer_ format is supported. If a "filelist" file is next to an
 episode, it will use it to extract its real name and forge the good
 query.
 
-.. _donate: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=EC7EPAVR5MXV6&submit.x=29&submit.y=10
 .. _aur package: https://aur.archlinux.org/packages/addic7ed-cli
 .. _video-organizer: https://github.com/JoelSjogren/video-organizer
