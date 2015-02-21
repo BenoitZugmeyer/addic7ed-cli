@@ -152,17 +152,31 @@ def main():
     version = pkg_resources.require('addic7ed')[0].version
 
     epilog = '''
+    Authentification:
+
+      You can login with your addic7ed.com identifiers to increase your daily
+      download quota:
+
+      * Anonymous users are limited to 15 downloads per 24 hours on their IP
+        address
+
+      * Registered users are limited to 40
+
+      * VIPs get 80 downloads (please consider donating)
+
     Configuration file:
 
       You can store frequently used options in a configuration file. Create a
       file at ~/.config/addic7ed (Linux, OSX) or %APPDATA%/config (Windows),
       and it will be parsed using the Python ConfigParser (see example below).
-      It can contain two sections:
+      It can contain three sections:
 
       * [flags], to set a flag (verbose, hearing-impaired, overwrite, ignore,
         batch or brute-batch)
 
       * [languages], to list prefered languages
+
+      * [session], the session to use for authentification
 
       Example:
 
@@ -173,6 +187,9 @@ def main():
         [languages]
         french
         english
+
+        [session]
+        abcdef
 
     Video organizer:
       video-organizer format is supported. If a "filelist" file is next to an
