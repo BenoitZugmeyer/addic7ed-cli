@@ -3,7 +3,7 @@ import re
 
 from addic7ed.util import string_set, normalize_release
 from addic7ed.error import FatalError
-from addic7ed.request import get
+from addic7ed.request import session
 
 
 class Version(object):
@@ -55,7 +55,7 @@ class Version(object):
                     **self.__dict__)
 
     def download(self, filename):
-        content = get(self.url, raw=True)
+        content = session.get(self.url).content
 
         if content[:9] == '<!DOCTYPE':
             raise FatalError('Daily Download count exceeded.')

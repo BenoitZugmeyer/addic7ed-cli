@@ -5,20 +5,37 @@ except ImportError:
     from urlparse import urljoin
 
 import requests
-from pyquery import PyQuery as query
+from pyquery import PyQuery
 
-__all__ = ['get', 'get_last_url']
-
-last_url = 'http://www.addic7ed.com/'
+__all__ = ['session']
 
 
-def get(url, raw=False, **params):
-    global last_url
-    url = urljoin(last_url, url)
-    response = requests.get(url, headers={'Referer': last_url}, params=params)
-    last_url = response.url
-    return response.content if raw else query(response.content)
+class Response(object):
+
+    def __init__(self, response):
+        self._response = response
+        self._query = None
+
+    def __getattr__(self, name):
+        return getattr(self._response, name)
+
+    def __call__(self, query):
+        if not self._query:
+            self._query = PyQuery(self.content)
+
+        return self._query(query)
 
 
-def get_last_url():
-    return last_url
+class Session(requests.Session):
+
+    last_url = 'http://www.addic7ed.com/'
+
+    def request(self, method, url, *args, **kwargs):
+        url = urljoin(self.last_url, url)
+        self.headers = {'Referer': self.last_url}
+        response = super(Session, self).request(method, url, *args, **kwargs)
+        self.last_url = response.url
+        return Response(response)
+
+
+session = Session()

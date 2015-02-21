@@ -1,10 +1,12 @@
 
 import os
+from getpass import getpass
 
 from addic7ed.error import Error
 from addic7ed.util import remove_extension, file_to_query, string_set
 from addic7ed.episode import search
 from addic7ed.compat import echo, input
+from addic7ed.login import login
 
 
 class UI(object):
@@ -126,3 +128,21 @@ class SearchUI(UI):
                 self.launch_file(file)
             except Error as e:
                 echo('Error:', e)
+
+
+class LoginUI(UI):
+
+    def launch(self):
+        user = input('User: ')
+        password = getpass('Password: ')
+
+        self.args.session = login(user, password)
+        self.args.save_session()
+
+
+class LogoutUI(UI):
+
+    def launch(self):
+        self.args.session = None
+        self.args.save_session()
+        echo('Logged out')

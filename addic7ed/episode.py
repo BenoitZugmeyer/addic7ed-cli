@@ -6,7 +6,7 @@ try:
 except ImportError:
     from urllib import quote
 
-from addic7ed.request import get, get_last_url
+from addic7ed.request import session
 from addic7ed.version import Version
 from addic7ed.compat import encode
 
@@ -36,7 +36,7 @@ class Episode(object):
         if self.versions:
             return
 
-        result = get(self.url)
+        result = session.get(self.url)
         tables = result('.tabel95')
         self.title = tables.find('.titulo').contents()[0].strip()
 
@@ -91,8 +91,9 @@ class Episode(object):
 
 
 def search(query):
-    results = get('/search.php', search=query, submit='Search')
-    last_url = get_last_url()
+    results = session.get('/search.php',
+                          params={'search': query, 'submit': 'Search'})
+    last_url = session.last_url
     if '/search.php' in last_url:
         return [
             Episode(quote(encode(link.attrib['href'])),

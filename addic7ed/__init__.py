@@ -9,8 +9,9 @@ import os.path
 import argparse
 
 from addic7ed.compat import echo, basestring
-from addic7ed.ui import SearchUI
+from addic7ed.ui import SearchUI, LoginUI, LogoutUI
 from addic7ed.error import Error, FatalError
+from addic7ed.login import set_session, get_current_user
 
 
 class Arguments(object):
@@ -58,6 +59,26 @@ class Arguments(object):
                               if v is not False]
         else:
             self._language = []
+
+        if config.has_section('session') and config.items('session'):
+            self.session = config.items('session')[0][0]
+        else:
+            self.session = False
+
+    def save_session(self):
+        config = self.get_configparser()
+
+        if self.session:
+            if not config.has_section('session'):
+                config.add_section('session')
+
+            config.set('session', self.session, None)
+
+        elif config.has_section('session'):
+            config.remove_section('session')
+
+        with open(self.configuration_path, 'w') as fp:
+            config.write(fp)
 
     @property
     def configuration_path(self):
@@ -115,11 +136,11 @@ def search(arguments):
 
 
 def login(arguments):
-    echo('login')
+    LoginUI(arguments).launch()
 
 
 def logout(arguments):
-    echo('logout')
+    LogoutUI(arguments).launch()
 
 
 def main():
@@ -228,6 +249,12 @@ def main():
     namespace.read_defaults()
 
     parser.parse_args(args=args, namespace=namespace)
+
+    if namespace.session:
+        set_session(namespace.session)
+        user = get_current_user()
+        if user:
+            echo('Logged as', user)
 
     try:
         globals()[namespace.command](namespace)
