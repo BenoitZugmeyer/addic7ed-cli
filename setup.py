@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 setup(name='addic7ed',
-      version='1.0-dev0',
+      version='1.0-beta0',
       description='A commandline access to addic7ed subtitles',
       long_description=readme(),
       url='https://github.com/BenoitZugmeyer/addic7ed-cli/',
