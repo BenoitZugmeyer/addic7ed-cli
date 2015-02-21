@@ -13,17 +13,6 @@ from addic7ed.error import Error, FatalError
 
 
 class Arguments(object):
-    def __init__(self):
-        self.language = []
-        self.default_language = []
-        self.verbose = False
-        self.hearing_impaired = False
-        self.batch = False
-        self.brute_batch = False
-        self.query = None
-        self.release = None
-        self.overwrite = False
-        self.ignore = False
 
     @staticmethod
     def get_paths():
@@ -35,30 +24,17 @@ class Arguments(object):
 
         # Windows
         if 'APPDATA' in os.environ:
-            paths.append(os.path.join(os.environ['APPDATA'], 'config'))
+            paths.insert(0, os.path.join(os.environ['APPDATA'], 'config'))
 
         return paths
 
     def read_defaults(self):
-        paths = self.get_paths()
-        valid_paths = (path for path in paths if os.path.isfile(path))
-        configuration_path = next(valid_paths, None)
 
-        self.default_language = []
+        config = self.get_configparser()
 
-        if configuration_path is not None:
-            config = configparser.ConfigParser(allow_no_value=True)
-            config.read(configuration_path)
-
-            if config.has_section('flags'):
-                self._read_flags(config)
-
-            if config.has_section('languages'):
-                self._read_languages(config)
-
-    def _read_flags(self, config):
-        def getbool(name, default=False):
-            if not config.has_option('flags', name):
+        def getflag(name, default=False):
+            if not config.has_section('flags') or \
+                    not config.has_option('flags', name):
                 return default
 
             value = config.get('flags', name)
@@ -67,20 +43,40 @@ class Arguments(object):
 
             return value is None
 
-        self.verbose = getbool('verbose')
-        self.hearing_impaired = getbool('hearing-impaired')
-        self.batch = getbool('batch')
-        self.brute_batch = getbool('brute-batch')
-        self.overwrite = getbool('overwrite')
-        self.ignore = getbool('ignore')
+        self.verbose = getflag('verbose')
+        self.hearing_impaired = getflag('hearing-impaired')
+        self.batch = getflag('batch')
+        self.brute_batch = getflag('brute-batch')
+        self.overwrite = getflag('overwrite')
+        self.ignore = getflag('ignore')
 
-    def _read_languages(self, config):
-        self.default_language = [l for l, v in config.items('languages')
-                                 if v is not False]
+        if config.has_section('languages'):
+            self._language = [l for l, v in config.items('languages')
+                              if v is not False]
+        else:
+            self._language = []
 
-    def finalize(self):
-        if not self.language:
-            self.language = self.default_language[:]
+    @property
+    def configuration_path(self):
+        paths = self.get_paths()
+        valid_paths = (path for path in paths if os.path.isfile(path))
+        return next(valid_paths, paths[0])
+
+    def get_configparser(self):
+        configuration_path = self.configuration_path
+        config = configparser.ConfigParser(allow_no_value=True)
+        if os.path.isfile(configuration_path):
+            config.read(configuration_path)
+        return config
+
+    @property
+    def language(self):
+        return self._language
+
+    @language.setter
+    def language(self, language):
+        if language:
+            self._language = language
 
 
 def main():
@@ -172,8 +168,6 @@ def main():
     args.read_defaults()
 
     parser.parse_args(namespace=args)
-
-    args.finalize()
 
     try:
         for file in args.file:
