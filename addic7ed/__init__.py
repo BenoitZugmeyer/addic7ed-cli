@@ -112,17 +112,21 @@ class ArgumentParser(object):
         self._parser = argparse.ArgumentParser(**kwargs)
         self._arggroup = self._parser
         self._root_parser = self._parser
+        self.first_candidates = ['-h', '--help']
 
     def configure_subparser(self, **kwargs):
         if self._subparsers is None:
             self._subparsers = self._parser.add_subparsers(**kwargs)
 
-    def add_subparser(self, *args, **kwargs):
-        self._parser = self._subparsers.add_parser(*args, **kwargs)
+    def add_subparser(self, name, *args, **kwargs):
+        self._parser = self._subparsers.add_parser(name, *args, **kwargs)
         self._arggroup = self._parser
+        self.first_candidates.append(name)
 
-    def add_argument(self, *args, **kwargs):
-        self._arggroup.add_argument(*args, **kwargs)
+    def add_argument(self, *names, **kwargs):
+        self._arggroup.add_argument(*names, **kwargs)
+        if self._arggroup == self._root_parser:
+            self.first_candidates.extend(names)
 
     def add_argument_group(self, *args, **kwargs):
         self._arggroup = self._parser.add_argument_group(*args, **kwargs)
@@ -258,8 +262,7 @@ def main():
                          help='Logout from addic7ed.com.')
     args = sys.argv[1:]
 
-    if args and not args[0].startswith('-') and \
-            args[0] not in ('search', 'login', 'logout'):
+    if args and args[0] not in parser.first_candidates:
         args[0:0] = ('search',)
 
     namespace = Arguments()
