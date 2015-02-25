@@ -33,11 +33,16 @@ class UI(object):
                 index += 1
 
             while True:
-                try:
-                    result = int(input('> '))
+                answer = input('[1] > ')
+                if not answer:
+                    result = 1
 
-                except ValueError:
-                    result = None
+                else:
+                    try:
+                        result = int(answer)
+
+                    except ValueError:
+                        result = None
 
                 if result and 1 <= result <= len(choices):
                     break
@@ -49,21 +54,23 @@ class UI(object):
         echo(result)
         return result
 
-    def confirm(self, question):
-        question += ' [yn]> '
+    def confirm(self, question, default=None):
+        responses = 'yn' if default is None else 'Yn' if default else 'yN'
+        question += ' [{}] > '.format(responses)
 
         if self.batch:
             return True
 
         while True:
             answer = input(question)
-            if answer in 'yn':
-                break
+            if answer in ('y', 'n'):
+                return answer == 'y'
+
+            elif answer == '' and default is not None:
+                return default
 
             else:
                 echo('Bad answer')
-
-        return answer == 'y'
 
 
 class SearchUI(UI):
@@ -84,7 +91,7 @@ class SearchUI(UI):
         if os.path.isfile(filename):
             echo('File exists.', end=' ')
             if args.ignore or (not args.overwrite and
-                               not self.confirm('Overwrite?')):
+                               not self.confirm('Overwrite?', True)):
                 echo('Ignoring.')
                 ignore = True
 
