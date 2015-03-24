@@ -1,0 +1,46 @@
+2015-01-24 - v0.1.11
+Ignore .part extension
+
+2014-05-08 - v0.1.10
+Fix three digits serie numbers (again)
+Configuration file support
+
+2014-03-14 - v0.1.9
+Fix for new addic7ed.com navigation
+ArchLinux PKGBUILD
+
+2014-02-27 - v0.1.8
+Handle file names with "season" and "episode"
+Update dependencies
+Fix search based on filenames without release
+
+2013-07-16 - v0.1.7
+Handle three digits serie numbers
+video-organizer support
+.part file names support
+
+2012-12-11 - v0.1.6
+Actually apply hearing impaired option
+Improve documentation
+
+2012-12-10 - v0.1.5
+Brute batch mode
+
+2012-12-10 - v0.1.4
+Verbose mode
+Fix season number > 10
+
+2012-12-10 - v0.1.3
+Add an exception to support CSI New York
+Release equivalence notion
+
+2012-12-10 - v0.1.2
+Fix release distance computation
+Do not sort results alphabetically
+
+2012-12-09 - v0.1.1
+Hearing impaired support
+Remove stopwords when computing the query
+
+2012-12-09 - v0.1
+Initial release
