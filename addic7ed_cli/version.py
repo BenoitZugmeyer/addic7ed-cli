@@ -1,9 +1,9 @@
 
 import re
 
-from addic7ed.util import string_set, normalize_release
-from addic7ed.error import FatalError
-from addic7ed.request import session
+from addic7ed_cli.util import string_set, normalize_release
+from addic7ed_cli.error import FatalError
+from addic7ed_cli.request import session
 
 
 class Version(object):

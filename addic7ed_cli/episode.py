@@ -6,9 +6,9 @@ try:
 except ImportError:
     from urllib import quote
 
-from addic7ed.request import session
-from addic7ed.version import Version
-from addic7ed.compat import encode
+from addic7ed_cli.request import session
+from addic7ed_cli.version import Version
+from addic7ed_cli.compat import encode
 
 __all__ = ['search', 'Episode']
 

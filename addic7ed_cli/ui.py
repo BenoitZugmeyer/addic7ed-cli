@@ -2,11 +2,11 @@
 import os
 from getpass import getpass
 
-from addic7ed.error import Error
-from addic7ed.util import remove_extension, file_to_query, string_set
-from addic7ed.episode import search
-from addic7ed.compat import echo, input
-from addic7ed.login import login
+from addic7ed_cli.error import Error
+from addic7ed_cli.util import remove_extension, file_to_query, string_set
+from addic7ed_cli.episode import search
+from addic7ed_cli.compat import echo, input
+from addic7ed_cli.login import login
 
 
 class UI(object):

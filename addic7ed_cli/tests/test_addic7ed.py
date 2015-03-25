@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from addic7ed.episode import Episode, search
-from addic7ed.util import file_to_query, normalize_release
+from addic7ed_cli.episode import Episode, search
+from addic7ed_cli.util import file_to_query, normalize_release
 
 
 def s(*args):

@@ -6,7 +6,7 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
-setup(name='addic7ed',
+setup(name='addic7ed-cli',
       version='1.0',
       description='A commandline access to addic7ed subtitles',
       long_description=readme(),
@@ -14,13 +14,13 @@ setup(name='addic7ed',
       author='Benoît Zugmeyer',
       author_email='bzugmeyer@gmail.com',
       license='Expat',
-      packages=['addic7ed'],
+      packages=['addic7ed_cli'],
       install_requires=[
           'pyquery>=1.2.4',
           'requests>=2.2.1',
       ],
       entry_points={
-          'console_scripts': ['addic7ed=addic7ed.__init__:main'],
+          'console_scripts': ['addic7ed=addic7ed_cli.__init__:main'],
       },
       test_suite='nose.collector',
       tests_require=['nose'],

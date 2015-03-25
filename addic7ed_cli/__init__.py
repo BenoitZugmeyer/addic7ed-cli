@@ -8,10 +8,10 @@ except ImportError:
 import os.path
 import argparse
 
-from addic7ed.compat import echo, basestring
-from addic7ed.ui import SearchUI, LoginUI, LogoutUI
-from addic7ed.error import Error, FatalError
-from addic7ed.login import set_session, get_current_user
+from addic7ed_cli.compat import echo, basestring
+from addic7ed_cli.ui import SearchUI, LoginUI, LogoutUI
+from addic7ed_cli.error import Error, FatalError
+from addic7ed_cli.login import set_session, get_current_user
 
 
 class Arguments(object):
@@ -153,7 +153,7 @@ def main():
     import pkg_resources
     import sys
 
-    version = pkg_resources.require('addic7ed')[0].version
+    version = pkg_resources.require('addic7ed-cli')[0].version
 
     epilog = '''
     Authentification:

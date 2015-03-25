@@ -1,6 +1,6 @@
 
-from addic7ed.request import session
-from addic7ed.error import Error
+from addic7ed_cli.request import session
+from addic7ed_cli.error import Error
 
 
 def login(user, password):

@@ -2,7 +2,7 @@ import os
 import re
 import xml.etree.ElementTree as ET
 
-from addic7ed.compat import echo
+from addic7ed_cli.compat import echo
 
 
 def normalize_release(release):
