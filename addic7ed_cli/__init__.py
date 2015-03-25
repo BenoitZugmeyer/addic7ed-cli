@@ -45,8 +45,6 @@ class Arguments(object):
 
             return value is None
 
-        self.command = 'search'
-
         self.verbose = getflag('verbose')
         self.hearing_impaired = getflag('hearing-impaired')
         self.batch = getflag('batch')
@@ -133,6 +131,9 @@ class ArgumentParser(object):
 
     def parse_args(self, *args, **kwargs):
         self._root_parser.parse_args(*args, **kwargs)
+
+    def print_usage(self):
+        self._root_parser.print_usage()
 
 
 def search(arguments):
@@ -269,6 +270,10 @@ def main():
     namespace.read_defaults()
 
     parser.parse_args(args=args, namespace=namespace)
+
+    if not namespace.command:
+        parser.print_usage()
+        exit(1)
 
     if namespace.session:
         set_session(namespace.session)
