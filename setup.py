@@ -26,7 +26,7 @@ setup(name='addic7ed-cli',
       tests_require=['nose'],
       zip_safe=True,
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 5 - Production/Stable',
           'Environment :: Console',
           'Intended Audience :: End Users/Desktop',
           'License :: OSI Approved :: MIT License',
