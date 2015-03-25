@@ -7,6 +7,15 @@ This is a little command-line utility to fetch subtitles from addic7ed.
 Install
 =======
 
+From pypi
+---------
+
+Install latest stable version with::
+
+    $ pip install addic7ed-cli
+
+Use :code:`--upgrade` to upgrade.
+
 Latest
 ------
 
