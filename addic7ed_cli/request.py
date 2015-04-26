@@ -32,7 +32,13 @@ class Session(requests.Session):
 
     def request(self, method, url, *args, **kwargs):
         url = urljoin(self.last_url, url)
-        self.headers = {'Referer': self.last_url}
+        self.headers = {
+            'Referer': self.last_url,
+
+            # Don't use Keep-Alive requests as requests/urllib3 currently has a bug
+            # https://github.com/kennethreitz/requests/issues/2568
+            'Connection': 'close'
+        }
         response = super(Session, self).request(method, url, *args, **kwargs)
         self.last_url = response.url
         return Response(response)
