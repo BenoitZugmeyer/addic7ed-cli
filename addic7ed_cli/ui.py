@@ -62,7 +62,7 @@ class UI(object):
             return True
 
         while True:
-            answer = input(question)
+            answer = input(question).lower()
             if answer in ('y', 'n'):
                 return answer == 'y'
 
