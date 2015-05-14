@@ -222,7 +222,9 @@ def main():
                          help='Search for a subtitle and download it')
 
     parser.add_argument('file', nargs='+',
-                        help='Video file name.')
+                        help='Subtitle file name. The extension will be '
+                        'replaced by .srt, so an existing video file name '
+                        'can be given.')
 
     parser.add_argument('-q', '--query',
                         help='Custom query. (default: based on the filename)')
