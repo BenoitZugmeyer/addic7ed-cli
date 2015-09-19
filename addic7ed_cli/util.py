@@ -53,6 +53,7 @@ def file_to_query(filename):
 
     # exceptions
     basename = re.sub(r'\bdont\b', 'don\'t', basename)
+    basename = re.sub(r'\byoure\b', 'you\'re', basename)
     basename = re.sub(r'\bcsi new york\b', 'csi ny', basename)
 
     episode = re.search(r'season\s+0*(\d+)\s+episode\s+(\d+)',

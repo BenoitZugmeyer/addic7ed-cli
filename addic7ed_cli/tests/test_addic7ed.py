@@ -47,6 +47,9 @@ class TestAddic7ed(TestCase):
         self.file_to_query('CSI.S13E06.720p.HDTV.X264-DIMENSION.mkv',
                            'csi 13x06',
                            s('dimension', 'sys', 'lol'))
+        self.file_to_query('Youre.the.Worst.S02E02.720p.HDTV.X264-DIMENSION[EtHD].mkv',
+                           "you're the worst 2x02",
+                           s('dimension', 'sys', 'lol'))
 
     def test_file_to_query_stopword(self):
         self.file_to_query('Foo.and.Bar.S02E23.PLOP.mkv',
