@@ -1,3 +1,9 @@
+2015-09-28 - v1.3
+Fix occasional error when querying addic7ed
+Change "youre" to "you're" in query
+Drop support of python 2.6
+Ignore character case on confirm input
+
 2015-04-26 - v1.2
 Fix for an issue in the latest version of requests (a dependency library)
 
