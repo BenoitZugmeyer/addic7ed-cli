@@ -108,3 +108,5 @@ class TestAddic7ed(TestCase):
     def test_parse_release(self):
         self.assertEqual(s('webdl', 'bs'),
                          parse_release('WEBDL-BS Resync from DIMENSION.'))
+        self.assertEqual(s('webdl', 'bs'),
+                         parse_release('WEB-DL-BS'))
