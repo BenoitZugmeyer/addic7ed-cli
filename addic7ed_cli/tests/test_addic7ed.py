@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from addic7ed_cli.episode import Episode, search
-from addic7ed_cli.util import file_to_query, normalize_release
+from addic7ed_cli.util import file_to_query, normalize_release, parse_release
 
 
 def s(*args):
@@ -104,3 +104,7 @@ class TestAddic7ed(TestCase):
         self.assertEqual(s('lol', 'sys', 'dimension'),
                          normalize_release(s('lol')))
         self.assertEqual(s('mdr'), normalize_release(s('mdr')))
+
+    def test_parse_release(self):
+        self.assertEqual(s('webdl', 'bs'),
+                         parse_release('WEBDL-BS Resync from DIMENSION.'))

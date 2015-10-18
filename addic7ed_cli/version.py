@@ -1,7 +1,7 @@
 
 import re
 
-from addic7ed_cli.util import string_set, normalize_release
+from addic7ed_cli.util import parse_release
 from addic7ed_cli.error import FatalError
 from addic7ed_cli.request import session
 
@@ -14,8 +14,7 @@ class Version(object):
         self.release = release
         self.infos = infos
         self.completeness = completeness
-        self.release_hash = normalize_release(string_set(infos) |
-                                              string_set(release))
+        self.release_hash = parse_release(infos) | parse_release(release)
         self.hearing_impaired = hearing_impaired
         self.weight = 0
 

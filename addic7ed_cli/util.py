@@ -21,6 +21,9 @@ def normalize_release(release):
 
     return release
 
+def parse_release(release):
+    release = re.sub(r'\bResync from \w+', '', release, flags=re.I)
+    return normalize_release(string_set(release))
 
 def remove_extension(filename):
     filename, ext = os.path.splitext(filename)
@@ -82,7 +85,7 @@ def file_to_query(filename):
         release = basename
 
     query = normalize_whitespace(' '.join((basename, episode)))
-    release = normalize_release(string_set(release))
+    release = parse_release(release)
     return query, release
 
 
