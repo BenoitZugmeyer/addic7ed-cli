@@ -23,7 +23,7 @@ def normalize_release(release):
 
 def parse_release(release):
     release = re.sub(r'\bResync from \w+', '', release, flags=re.I)
-    release = re.sub(r'\bweb-dl\b', 'webdl', release, flags=re.I)
+    release = re.sub(r'\bweb[ -]dl\b', 'webdl', release, flags=re.I)
     return normalize_release(string_set(release))
 
 def remove_extension(filename):
