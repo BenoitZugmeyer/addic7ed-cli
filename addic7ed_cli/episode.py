@@ -15,10 +15,11 @@ __all__ = ['search', 'Episode']
 
 class Episode(object):
 
-    def __init__(self, url, title=None):
+    def __init__(self, url, title=None, page=None):
         self.url = url
         self.title = title
         self.versions = []
+        self._page = page
 
     def __eq__(self, other):
         return self.url == other.url and self.title == other.title
@@ -36,7 +37,7 @@ class Episode(object):
         if self.versions:
             return
 
-        result = session.get(self.url)
+        result = self._page or session.get(self.url)
         tables = result('.tabel95')
         self.title = tables.find('.titulo').contents()[0].strip()
 
@@ -102,4 +103,4 @@ def search(query):
         ]
     else:
         title = encode(results('.titulo').contents()[0]).strip()
-        return [Episode(last_url, title)]
+        return [Episode(last_url, title, page=results)]
