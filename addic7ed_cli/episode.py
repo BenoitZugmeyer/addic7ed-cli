@@ -30,8 +30,8 @@ class Episode(object):
     def __str__(self):
         return self.title
 
-    def add_version(self, *args):
-        self.versions.append(Version(*args))
+    def add_version(self, **kwargs):
+        self.versions.append(Version(**kwargs))
 
     def fetch_versions(self):
         if self.versions:
@@ -61,11 +61,25 @@ class Episode(object):
                 download = tr('a[href*=updated]') or tr('a[href*=original]')
                 if not download:
                     continue
+
                 hearing_impaired = \
                     bool(tr.next().find('img[title="Hearing Impaired"]'))
-                download = encode(download.attr.href)
-                self.add_version(download, language, release, infos,
-                                 completeness, hearing_impaired)
+                url = encode(download.attr.href)
+                favorite = tr('a[href*="saveFavorite"]')[0].attrib['href']
+                id, language_id, version = \
+                    re.search(r'(\d+),(\d+),(\d+)', favorite).groups()
+
+                self.add_version(
+                    id=id,
+                    language_id=language_id,
+                    version=version,
+                    url=url,
+                    language=language,
+                    release=release,
+                    infos=infos,
+                    completeness=completeness,
+                    hearing_impaired=hearing_impaired,
+                )
 
     def filter_versions(self, languages=[], release=set(), completed=True,
                         hearing_impaired=False):

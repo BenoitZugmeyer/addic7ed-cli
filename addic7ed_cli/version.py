@@ -1,5 +1,8 @@
 
 import re
+import zipfile
+import io
+import shutil
 
 from addic7ed_cli.util import parse_release
 from addic7ed_cli.error import FatalError
@@ -7,8 +10,11 @@ from addic7ed_cli.request import session
 
 
 class Version(object):
-    def __init__(self, url, language, release, infos, completeness,
-                 hearing_impaired):
+    def __init__(self, id, language_id, version, url, language, release, infos,
+                 completeness, hearing_impaired):
+        self.id = id
+        self.language_id = language_id
+        self.version = version
         self.url = url
         self.language = language
         self.release = release
@@ -61,3 +67,20 @@ class Version(object):
 
         with open(filename, 'wb') as fp:
             fp.write(content)
+
+    @staticmethod
+    def multidownload(versions, filenames):
+        data = [
+            ('multishow[]',
+             '{0.language_id}/{0.id}/{0.version}'.format(version))
+            for version in versions
+        ]
+
+        result = session.post('/downloadmultiple.php', data=data)
+
+        z = zipfile.ZipFile(io.BytesIO(result.content))
+        zipfilenames = (n for n in z.namelist() if n.endswith('.srt'))
+
+        for (filename, zipfilename) in zip(filenames, zipfilenames):
+            with open(filename, 'wb') as output:
+                shutil.copyfileobj(z.open(zipfilename), output)

@@ -6,7 +6,8 @@ from addic7ed_cli.error import Error
 from addic7ed_cli.util import remove_extension, file_to_query, string_set
 from addic7ed_cli.episode import search
 from addic7ed_cli.compat import echo, input
-from addic7ed_cli.login import login
+from addic7ed_cli.login import login, get_current_user
+from addic7ed_cli.version import Version
 
 
 class UI(object):
@@ -84,7 +85,6 @@ class SearchUI(UI):
     def launch_file(self, filename):
         echo('-' * 30)
         args = self.args
-        filename = remove_extension(filename) + '.srt'
 
         echo('Target SRT file:', filename)
         ignore = False
@@ -121,20 +121,35 @@ class SearchUI(UI):
 
                 episode = self.select(search_results)
 
-                todownload = self.episode(episode, args.language, release)
-                todownload.download(filename)
+                return self.episode(episode, args.language, release)
 
             else:
                 echo('No result')
 
         echo()
 
-    def launch(self):
+    def iter_files(self):
         for file in self.args.file:
             try:
-                self.launch_file(file)
+                output_file = remove_extension(file) + '.srt'
+                version = self.launch_file(output_file)
+                if version:
+                    yield version, output_file
+
             except Error as e:
                 echo('Error:', e)
+
+    def launch(self):
+        use_multidownload = bool(get_current_user()) and \
+            len(self.args.file) > 1
+
+        if use_multidownload:
+            echo('Using multi-download')
+            Version.multidownload(*zip(*self.iter_files()))
+
+        else:
+            for (version, output_file) in self.iter_files():
+                version.download(output_file)
 
 
 class LoginUI(UI):
