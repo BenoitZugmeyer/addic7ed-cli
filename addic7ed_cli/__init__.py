@@ -203,6 +203,9 @@ def main():
       informations.
     '''
 
+    namespace = Arguments()
+    namespace.read_defaults()
+
     parser = ArgumentParser(
         description='Downloads SRT files from addic7ed.com.',
         epilog=textwrap.dedent(epilog),
@@ -238,25 +241,42 @@ def main():
                         'than one time for fallbacks)')
 
     parser.add_argument('-H', '--hearing-impaired', action='store_true',
-                        help='Prefer hearing impaired version.')
+                        help='Prefer hearing impaired version.',
+                        default=namespace.hearing_impaired)
 
     parser.add_argument('--no-hearing-impaired', dest='hearing_impaired',
                         action='store_false')
 
     parser.add_argument('-o', '--overwrite', action='store_true',
-                        help='Always overwrite the SRT if it exists.')
+                        help='Always overwrite the SRT if it exists.',
+                        default=namespace.overwrite)
+
+    parser.add_argument('--no-overwrite', dest='overwrite',
+                        action='store_false')
 
     parser.add_argument('-i', '--ignore', action='store_true',
-                        help='Never overwrite the SRT if it exists.')
+                        help='Never overwrite the SRT if it exists.',
+                        default=namespace.ignore)
+
+    parser.add_argument('--no-ignore', dest='ignore',
+                        action='store_false')
 
     parser.add_argument('-b', '--batch', action='store_true',
                         help='Do not ask anything, get the best matching '
                         'subtitle. Cancel if the search returns more than one '
-                        'result.')
+                        'result.',
+                        default=namespace.batch)
+
+    parser.add_argument('--no-batch', dest='batch',
+                        action='store_false')
 
     parser.add_argument('-bb', '--brute-batch', action='store_true',
                         help='Do not ask anything, get the best matching '
-                        'subtitle. Use the first result of the search.')
+                        'subtitle. Use the first result of the search.',
+                        default=namespace.brute_batch)
+
+    parser.add_argument('--no-brute-batch', dest='brute_batch',
+                        action='store_false')
 
     parser.add_subparser('login',
                          help='Login on addic7ed.com. This is not required.')
@@ -267,9 +287,6 @@ def main():
 
     if args and args[0] not in parser.first_candidates:
         args[0:0] = ('search',)
-
-    namespace = Arguments()
-    namespace.read_defaults()
 
     parser.parse_args(args=args, namespace=namespace)
 
