@@ -23,35 +23,49 @@ class UI(object):
         if not choices:
             raise Error("Internal error: no choices!")
 
+        chosen_index = None
+        skipping = False
+
         if len(choices) == 1 or self.batch:
-            result = 1
+            chosen_index = 1
 
         else:
             just = len(str(len(choices)))
             index = 1
             for choice in choices:
-                echo(str(index).rjust(just), ':', choice)
+                echo(" {} : {}".format(str(index).rjust(just), choice))
                 index += 1
+
+            echo(" S : Skip")
 
             while True:
                 answer = input('[1] > ')
+
                 if not answer:
-                    result = 1
+                    chosen_index = 1
+
+                elif answer.lower() == "s":
+                    skipping = True
 
                 else:
                     try:
-                        result = int(answer)
+                        chosen_index = int(answer)
 
                     except ValueError:
-                        result = None
+                        pass
 
-                if result and 1 <= result <= len(choices):
+                if skipping or (chosen_index and
+                                1 <= chosen_index <= len(choices)):
                     break
 
                 else:
                     echo("Bad response")
 
-        result = choices[result - 1]
+        if skipping:
+            echo("Skipping")
+            return None
+
+        result = choices[chosen_index - 1]
         echo(result)
         return result
 
@@ -121,7 +135,8 @@ class SearchUI(UI):
 
                 episode = self.select(search_results)
 
-                return self.episode(episode, args.language, release)
+                return episode and \
+                    self.episode(episode, args.language, release)
 
             else:
                 echo('No result')
