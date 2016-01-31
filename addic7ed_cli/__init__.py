@@ -26,7 +26,8 @@ class Arguments(object):
 
         # Windows
         if 'APPDATA' in os.environ:
-            paths.insert(0, os.path.join(os.environ['APPDATA'], 'config'))
+            paths.insert(0, os.path.join(os.environ['APPDATA'],
+                                         'Addic7ed Configuration.txt'))
 
         return paths
 
@@ -293,6 +294,9 @@ def main():
     if not namespace.command:
         parser.print_usage()
         exit(1)
+
+    if namespace.verbose:
+        echo('Using configuration file', namespace.configuration_path)
 
     if namespace.session:
         set_session(namespace.session)

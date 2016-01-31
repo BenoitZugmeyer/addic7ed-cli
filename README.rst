@@ -59,9 +59,11 @@ Configuration file
 ==================
 
 You can store frequently used options in a configuration file. Create a
-file at :code:`~/.config/addic7ed` (Linux, OSX) or :code:`%APPDATA%/config` (Windows),
-and it will be parsed using the Python ConfigParser (see example below).
-It can contain three sections:
+file at :code:`~/.config/addic7ed` (Linux, OSX) or
+:code:`%APPDATA%/Addic7ed Configuration.txt` (Windows), and it will be
+parsed using the Python ConfigParser (see example below). Hint: use the
+:code:`--verbose` argument to print the full path of the configuration
+file when running a command. It can contain three sections:
 
 * [flags], to set a flag (verbose, hearing-impaired, overwrite, ignore,
   batch or brute-batch)
