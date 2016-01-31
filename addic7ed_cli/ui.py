@@ -96,60 +96,72 @@ class SearchUI(UI):
                                            self.args.hearing_impaired)
         return self.select(versions)
 
-    def launch_file(self, filename):
-        echo('-' * 30)
-        args = self.args
-
-        echo('Target SRT file:', filename)
+    def should_ignore_file(self, filename):
         ignore = False
+        echo('Target SRT file:', filename)
         if os.path.isfile(filename):
             echo('File exists.', end=' ')
-            if args.ignore or (not args.overwrite and
-                               not self.confirm('Overwrite?', True)):
+            if self.args.ignore or (not self.args.overwrite and
+                                    not self.confirm('Overwrite?', True)):
                 echo('Ignoring.')
                 ignore = True
 
             else:
                 echo('Overwriting.')
 
-        if not ignore:
-            query, release = file_to_query(filename)
+        return ignore
 
-            if args.query:
-                query = args.query
+    def launch_file(self, filename):
+        args = self.args
 
-            if args.release:
-                release = string_set(args.release)
+        query, release = file_to_query(filename)
 
-            if args.verbose:
-                echo('Using query "{query}" and release "{release}"'.format(
-                    release=' '.join(release),
-                    query=query
-                ))
+        if args.query:
+            query = args.query
 
-            search_results = search(query)
+        if args.release:
+            release = string_set(args.release)
 
-            if search_results:
-                if self.args.batch and len(search_results) > 1:
-                    raise Error('More than one result, aborting')
+        if args.verbose:
+            echo('Using query "{query}" and release "{release}"'.format(
+                release=' '.join(release),
+                query=query
+            ))
 
-                episode = self.select(search_results)
+        search_results = search(query)
 
-                return episode and \
-                    self.episode(episode, args.language, release)
+        if not search_results:
+            echo('No result')
+            return
 
-            else:
-                echo('No result')
+        if self.args.batch and len(search_results) > 1:
+            raise Error('More than one result, aborting')
 
-        echo()
+        episode = self.select(search_results)
+
+        return episode and self.episode(episode, args.language, release)
 
     def iter_files(self):
-        for file in self.args.file:
+        for file_arg in self.args.file:
             try:
-                output_file = remove_extension(file) + '.srt'
-                version = self.launch_file(output_file)
+
+                if not self.args.lang_suffix:
+                    output_file = remove_extension(file_arg) + '.srt'
+                    if self.should_ignore_file(output_file):
+                        continue
+
+                version = self.launch_file(file_arg)
                 if version:
+                    if self.args.lang_suffix:
+                        output_file = "{}.{}.srt".format(
+                            remove_extension(file_arg),
+                            version.iso639_language,
+                        )
+                        if self.should_ignore_file(output_file):
+                            continue
+
                     yield version, output_file
+                echo()
 
             except Error as e:
                 echo('Error:', e)

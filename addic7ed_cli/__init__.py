@@ -50,6 +50,7 @@ class Arguments(object):
         self.hearing_impaired = getflag('hearing-impaired')
         self.batch = getflag('batch')
         self.brute_batch = getflag('brute-batch')
+        self.lang_suffix = getflag('lang-suffix')
         self.overwrite = getflag('overwrite')
         self.ignore = getflag('ignore')
 
@@ -277,6 +278,14 @@ def main():
                         default=namespace.brute_batch)
 
     parser.add_argument('--no-brute-batch', dest='brute_batch',
+                        action='store_false')
+
+    parser.add_argument('--lang-suffix', action='store_true',
+                        help='Append the lang to the output subtitle '
+                        'filename.',
+                        default=namespace.lang_suffix)
+
+    parser.add_argument('--no-lang-suffix', dest='lang_suffix',
                         action='store_false')
 
     parser.add_subparser('login',

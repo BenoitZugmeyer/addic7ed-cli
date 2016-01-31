@@ -7,6 +7,7 @@ import shutil
 from addic7ed_cli.util import parse_release
 from addic7ed_cli.error import FatalError
 from addic7ed_cli.request import session
+from addic7ed_cli.language import iso639_3_codes
 
 
 class Version(object):
@@ -23,6 +24,10 @@ class Version(object):
         self.release_hash = parse_release(infos) | parse_release(release)
         self.hearing_impaired = hearing_impaired
         self.weight = 0
+
+    @property
+    def iso639_language(self):
+        return iso639_3_codes[self.language]
 
     def __eq__(self, other):
         return self.url == other.url and self.language == other.language
