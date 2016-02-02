@@ -77,6 +77,12 @@ class TestAddic7ed(TestCase):
         self.file_to_query('The.Serie.223.MDR.mkv', 'the serie 2x23', s('mdr'))
         self.file_to_query('hannibal.210.hdtv-lol', 'hannibal 2x10')
 
+    def test_file_to_query_fournumbers(self):
+        self.file_to_query('The.Serie.1234.MDR.mkv',
+                           'the serie 12x34',
+                           s('mdr'))
+        self.file_to_query('hannibal.1234.hdtv-lol', 'hannibal 12x34')
+
     def test_file_to_query_season_episode(self):
         self.file_to_query('The Serie Season 4 Episode 03 - Foo',
                            'the serie 4x03', s('foo'))

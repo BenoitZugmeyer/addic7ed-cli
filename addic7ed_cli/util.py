@@ -73,8 +73,8 @@ def file_to_query(filename):
         number = episode.group(2)
 
         if not season and len(number) >= 3:
-            season = number[0]
-            number = number[1:]
+            season = number[0:-2]
+            number = number[-2:]
 
         if season:
             episode = 'x'.join((season, number))
