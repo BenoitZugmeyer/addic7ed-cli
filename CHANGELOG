@@ -1,3 +1,19 @@
+2016-02-02 - v1.4
+New features:
+* Multidownload support
+* Suffix subtitle file name with the lang
+* Ability to skip a subtitle
+Speed improvements:
+* Memoize user informations
+* Don't fetch the episode page twice
+Minor impromevents:
+* Improve "webdl" support in query computation
+* Drop "resync from ..." when parsing a release string
+* Support season/episode number formated as four digits
+* Better configuration path on Windows
+Bug fix:
+* Fix flags support in configuration file
+
 2015-09-28 - v1.3
 Fix occasional error when querying addic7ed
 Change "youre" to "you're" in query
