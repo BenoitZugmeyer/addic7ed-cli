@@ -4,6 +4,9 @@ addic7ed-cli
 
 This is a little command-line utility to fetch subtitles from addic7ed.
 
+.. image:: https://travis-ci.org/BenoitZugmeyer/addic7ed-cli.svg?branch=master
+    :target: https://travis-ci.org/BenoitZugmeyer/addic7ed-cli
+
 Install
 =======
 
