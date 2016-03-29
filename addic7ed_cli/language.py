@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 iso639_3_codes = {
     'Albanian': 'sqi',
