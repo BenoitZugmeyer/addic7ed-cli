@@ -179,11 +179,13 @@ def main():
       It can contain three sections:
 
       * [flags], to set a flag (verbose, hearing-impaired, overwrite, ignore,
-        batch or brute-batch)
+        batch or brute-batch, see :code:`addic7ed search --help` for
+        informations about those flags)
 
       * [languages], to list prefered languages
 
-      * [session], the session to use for authentification
+      * [session], the session to use for authentification (this is automatically
+        populated when using :code:`addic7ed login`)
 
       Example:
 
