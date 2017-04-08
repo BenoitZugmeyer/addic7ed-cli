@@ -7,6 +7,8 @@ try:
 
     def encode(s):
         return s.encode('utf8')
+
+    PY2 = True
 except:
     # python3
     basestring = str
@@ -15,4 +17,16 @@ except:
     def encode(s):
         return s
 
-echo = print
+    PY2 = False
+
+
+
+import sys
+
+if not PY2 and sys.stdout.encoding != "UTF-8":
+    def echo(*args):
+        print(*[arg.encode(sys.stdout.encoding, errors="replace").decode(sys.stdout.encoding)
+                for arg in args])
+else:
+    def echo(*args):
+        print(*args)
