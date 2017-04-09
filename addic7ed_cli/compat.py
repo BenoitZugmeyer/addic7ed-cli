@@ -24,9 +24,8 @@ except:
 import sys
 
 if not PY2 and sys.stdout.encoding != "UTF-8":
-    def echo(*args):
-        print(*[arg.encode(sys.stdout.encoding, errors="replace").decode(sys.stdout.encoding)
-                for arg in args])
+    def echo(arg=""):
+        print(arg.encode(sys.stdout.encoding, errors="replace").decode(sys.stdout.encoding))
 else:
-    def echo(*args):
-        print(*args)
+    def echo(arg=""):
+        print(arg)

@@ -66,7 +66,7 @@ class UI(object):
             return None
 
         result = choices[chosen_index - 1]
-        echo(result)
+        echo("{}".format(result))
         return result
 
     def confirm(self, question, default=None):
@@ -98,16 +98,15 @@ class SearchUI(UI):
 
     def should_ignore_file(self, filename):
         ignore = False
-        echo('Target SRT file:', filename)
+        echo('Target SRT file: {}'.format(filename))
         if os.path.isfile(filename):
-            echo('File exists.', end=' ')
             if self.args.ignore or (not self.args.overwrite and
                                     not self.confirm('Overwrite?', True)):
-                echo('Ignoring.')
+                echo('File exists. Ignoring.')
                 ignore = True
 
             else:
-                echo('Overwriting.')
+                echo('File exists. Overwriting.')
 
         return ignore
 
@@ -164,7 +163,7 @@ class SearchUI(UI):
                 echo()
 
             except Error as e:
-                echo('Error:', e)
+                echo('Error: {}'.format(e))
 
     def launch(self):
         use_multidownload = bool(get_current_user()) and \

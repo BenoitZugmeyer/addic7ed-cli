@@ -307,23 +307,23 @@ def main():
         exit(1)
 
     if namespace.verbose:
-        echo('Using configuration file', namespace.configuration_path)
+        echo('Using configuration file {}'.format(namespace.configuration_path))
 
     if namespace.session:
         set_session(namespace.session)
         user = get_current_user()
         if user:
-            echo('Logged as', user)
+            echo('Logged as {}'.format(user))
 
     try:
         globals()[namespace.command](namespace)
 
     except Error as e:
-        echo('Error:', e)
+        echo('Error: {}'.format(e))
         exit(1)
 
     except FatalError as e:
-        echo('Fatal error:', e)
+        echo('Fatal error: {}'.format(e))
         exit(1)
 
     except KeyboardInterrupt:
