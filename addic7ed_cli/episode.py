@@ -106,10 +106,10 @@ class Episode(object):
 
 
 def search(query):
-    results = session.get('/search.php',
-                          params={'search': query, 'submit': 'Search'})
+    results = session.get('/srch.php',
+                          params={'search': query, 'Submit': 'Search'})
     last_url = session.last_url
-    if '/search.php' in last_url:
+    if '/srch.php' in last_url:
         return [
             Episode(quote(encode(link.attrib['href'])),
                     encode(link.text))
