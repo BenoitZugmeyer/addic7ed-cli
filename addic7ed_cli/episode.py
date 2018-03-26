@@ -65,7 +65,7 @@ class Episode(object):
                 hearing_impaired = \
                     bool(tr.next().find('img[title="Hearing Impaired"]'))
                 url = encode(download.attr.href)
-                badsub = tr('a[href*="badsub"]')[0].attrib['href']
+                badsub = tr.next().find('a[href*="fversion="]')[0].attrib['href']
                 id, version, language_id = \
                     re.search(r'id=(\d+)&fversion=(\d+)&lang=(\d+)', badsub).groups()
 
