@@ -74,11 +74,11 @@ class Version(object):
             fp.write(content)
 
     @staticmethod
-    def multidownload(versions, filenames):
+    def multidownload(files):
         data = [
             ('multishow[]',
              '{0.language_id}/{0.id}/{0.version}'.format(version))
-            for version in versions
+            for (version, _) in files
         ]
 
         result = session.post('/downloadmultiple.php', data=data)
@@ -86,6 +86,6 @@ class Version(object):
         z = zipfile.ZipFile(io.BytesIO(result.content))
         zipfilenames = (n for n in z.namelist() if n.endswith('.srt'))
 
-        for (filename, zipfilename) in zip(filenames, zipfilenames):
+        for (filename, zipfilename) in zip((filename for (_, filename) in files), zipfilenames):
             with open(filename, 'wb') as output:
                 shutil.copyfileobj(z.open(zipfilename), output)

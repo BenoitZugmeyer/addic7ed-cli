@@ -169,12 +169,17 @@ class SearchUI(UI):
         use_multidownload = bool(get_current_user()) and \
             len(self.args.file) > 1
 
-        if use_multidownload:
+        files = list(self.iter_files())
+
+        if not files:
+            echo('Nothing to download')
+
+        elif use_multidownload:
             echo('Using multi-download')
-            Version.multidownload(*zip(*self.iter_files()))
+            Version.multidownload(files)
 
         else:
-            for (version, output_file) in self.iter_files():
+            for (version, output_file) in files:
                 version.download(output_file)
 
 
