@@ -1,3 +1,6 @@
+2018-05-12 - v1.4.5
+Revert the search endpoint to the original
+
 2018-03-27 - v1.4.4
 Fix regression on v1.4.3 causing errors when searching for an episode
 
@@ -9,7 +12,7 @@ Minor fixes on "multidownload" feature
 Fix french language code
 
 2016-03-29 - v1.4.1
-Fix python 2.7 suppor
+Fix python 2.7 support
 
 2016-02-02 - v1.4
 New features:
