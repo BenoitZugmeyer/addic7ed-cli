@@ -31,6 +31,12 @@ ArchLinux
 
 An `AUR package`_ is waiting for you.
 
+Nix/NixOS
+---------
+
+addic7ed-cli is available from nixpkgs unstable channel::
+
+    $ nix-env -iA nixpkgs.pythonPackages.addic7ed-cli
 
 Usage
 =====
