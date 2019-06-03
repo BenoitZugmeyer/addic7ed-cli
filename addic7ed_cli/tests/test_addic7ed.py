@@ -16,7 +16,7 @@ class TestAddic7ed(TestCase):
         result = search('homeland 2x02')
         self.assertEqual(result, [
             Episode(
-                'http://www.addic7ed.com/serie/Homeland/2/2/Beirut_Is_Back',
+                'https://www.addic7ed.com/serie/Homeland/2/2/Beirut_Is_Back',
                 'Homeland - 02x02 - Beirut Is Back')
         ])
 

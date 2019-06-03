@@ -33,7 +33,7 @@ class Response(object):
 
 class Session(requests.Session):
 
-    last_url = 'http://www.addic7ed.com/'
+    last_url = 'https://www.addic7ed.com/'
 
     def request(self, method, url, *args, **kwargs):
         url = urljoin(self.last_url, url)
