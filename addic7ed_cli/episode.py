@@ -105,11 +105,11 @@ class Episode(object):
         return result
 
 
-def search(query):
-    results = session.get('/search.php',
+def search_with_endpoint(query, endpoint):
+    results = session.get(endpoint,
                           params={'search': query, 'Submit': 'Search'})
     last_url = session.last_url
-    if '/search.php' in last_url:
+    if endpoint in last_url:
         return [
             Episode(quote(encode(link.attrib['href'])),
                     encode(link.text))
@@ -118,3 +118,10 @@ def search(query):
     else:
         title = encode(results('.titulo').contents()[0]).strip()
         return [Episode(last_url, title, page=results)]
+
+def search(query):
+    # Sometimes it's srch.php, sometimes it's search.php
+    try:
+        return search_with_endpoint(query, '/srch.php')
+    except:
+        return search_with_endpoint(query, '/search.php')
